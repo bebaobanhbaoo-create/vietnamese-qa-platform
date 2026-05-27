@@ -4,3 +4,4 @@ pandas
 transformers
 torch
 sentence-transformers
+faiss-cpu
