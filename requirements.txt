@@ -5,3 +5,7 @@ transformers
 torch
 sentence-transformers
 faiss-cpu
+python-dotenv
+flask-cors
+requests
+tqdm
