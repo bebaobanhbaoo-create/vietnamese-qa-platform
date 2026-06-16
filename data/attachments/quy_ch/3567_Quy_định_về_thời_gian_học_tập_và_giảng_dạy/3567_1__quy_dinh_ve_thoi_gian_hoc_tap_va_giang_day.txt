@@ -1,0 +1,23 @@
+TRƯỜNG ĐẠI HỌC NGOẠI NGỮ - TIN HỌC TP. HỒ CHÍ MINH
+THỜI GIAN BIỂU HỌC TẬP VÀ GIẢNG DẠY
+
+| BUỔI | TIẾT | THỜI GIAN BẮT ĐẦU | THỜI GIAN KẾT THÚC |
+| :--- | :---: | :--- | :--- |
+| SÁNG | 1 | 06 giờ 45 phút | 07 giờ 35 phút |
+| | 2 | 07 giờ 35 phút | 08 giờ 25 phút |
+| | 3 | 08 giờ 25 phút | 09 giờ 15 phút |
+| | Nghỉ giải lao 15 phút | | |
+| | 4 | 09 giờ 30 phút | 10 giờ 20 phút |
+| | 5 | 10 giờ 20 phút | 11 giờ 10 phút |
+| | 6 | 11 giờ 10 phút | 12 giờ 00 phút |
+| | Nghỉ trưa | | |
+| CHIỀU | 7 | 12 giờ 45 phút | 13 giờ 35 phút |
+| | 8 | 13 giờ 35 phút | 14 giờ 25 phút |
+| | 9 | 14 giờ 25 phút | 15 giờ 15 phút |
+| | Nghỉ giải lao 15 phút | | |
+| | 10 | 15 giờ 30 phút | 16 giờ 20 phút |
+| | 11 | 16 giờ 20 phút | 17 giờ 10 phút |
+| | 12 | 17 giờ 10 phút | 18 giờ 00 phút |
+
+---
+Lưu ý sinh viên học tập tại cơ sở Hóc Môn: Tiết học đầu tiên bắt đầu vào lúc 06g45 đối với sinh viên khóa K30 và lúc 07g35 đối với sinh viên khóa K28.

@@ -1,0 +1,114 @@
+BỘ GIÁO DỤC VÀ ĐÀO TẠO
+TRƯỜNG ĐẠI HỌC NGOẠI NGỮ - TIN HỌC THÀNH PHỐ HỒ CHÍ MINH
+SỐ: 154/QĐ-ĐNT
+
+CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+Độc lập - Tự do - Hạnh phúc
+Thành phố Hồ Chí Minh, ngày 05 tháng 7 năm 2023
+
+QUYẾT ĐỊNH
+Về việc ban hành Nội quy phòng thi trắc nghiệm trên máy vi tính
+tại Trường Đại học Ngoại ngữ - Tin học Thành phố Hồ Chí Minh
+
+HIỆU TRƯỞNG
+TRƯỜNG ĐẠI HỌC NGOẠI NGỮ - TIN HỌC THÀNH PHỐ HỒ CHÍ MINH
+
+Căn cứ Quyết định số 616/TTg ngày 26/10/1994 của Thủ tướng Chính phủ cho phép thành lập Trường Đại học Ngoại ngữ - Tin học Thành phố Hồ Chí Minh;
+Căn cứ Quyết định số 1757/QĐ-TTg ngày 15/10/2015 của Thủ tướng Chính phủ về việc chuyển đổi loại hình của Trường Đại học ngoại ngữ - Tin học Thành phố Hồ Chí Minh;
+Căn cứ Thông tư số 08/2021/TT-BGDĐT ngày 18/3/2021 của Bộ trưởng Bộ Giáo dục và Đào tạo về việc ban hành Quy chế đào tạo trình độ đại học;
+Căn cứ Quyết định số 476/QĐ-ĐNT ngày 30/12/2021 của Trường Đại học Ngoại ngữ - Tin học Thành phố Hồ Chí Minh về việc ban hành Quy chế đào tạo trình độ đại học theo hệ thống tín chỉ;
+Theo đề nghị của Trưởng Phòng Khảo thí – Bảo đảm chất lượng giáo dục.
+
+QUYẾT ĐỊNH:
+
+Điều 1. Ban hành kèm theo Quyết định này là “Nội quy phòng thi trắc nghiệm trên máy vi tính tại Trường Đại học Ngoại ngữ - Tin học Thành phố Hồ Chí Minh”.
+Điều 2. Quyết định này có hiệu lực kể từ ngày ký.
+Điều 3. Các đơn vị thuộc Trường và các cá nhân liên quan có trách nhiệm thi hành Quyết định này.
+
+Nơi nhận:
+- Như Điều 3;
+- Hội đồng Trường;
+- Ban Giám hiệu;
+- Lưu: VT, P.KT-BĐCLGD.
+
+KT. HIỆU TRƯỞNG
+PHÓ HIỆU TRƯỞNG
+(Đã ký và đóng dấu)
+Nguyễn Ngọc Vũ
+
+---
+
+BỘ GIÁO DỤC VÀ ĐÀO TẠO
+TRƯỜNG ĐẠI HỌC NGOẠI NGỮ - TIN HỌC THÀNH PHỐ HỒ CHÍ MINH
+
+CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+Độc lập – Tự do – Hạnh phúc
+
+NỘI QUY
+Phòng thi trắc nghiệm trên máy vi tính
+(Ban hành kèm theo Quyết định số 154/QĐ-ĐNT ngày 05 tháng 7 năm 2023 của Trường Đại học Ngoại ngữ - Tin học TP. Hồ Chí Minh)
+
+Điều 1. Trách nhiệm của cán bộ coi thi
+1. Coi thi
+a) CBCT phải có mặt tại Hội đồng thi theo giờ quy định và không rời phòng thi khi đang làm nhiệm vụ coi thi. Trong trường hợp cần thiết phải rời phòng thi, CBCT báo cáo với Hội đồng thi để cử người hỗ trợ giám sát phòng thi, hoặc báo với bộ phận giám sát nếu có.
+b) CBCT không được sử dụng các thiết bị điện tử; không được giúp đỡ thí sinh làm bài thi dưới bất kỳ hình thức nào; không được làm việc riêng (chấm bài thi, đọc báo, nói chuyện riêng,...); không được hút thuốc, uống bia, rượu trong khi làm nhiệm vụ coi thi.
+c) CBCT phải mặc trang phục lịch sự, đeo thẻ hoặc đeo bảng tên do Trường cấp trong suốt thời gian coi thi.
+d) CBCT gọi tên SV vào phòng thi, những SV vào trễ quá 10 phút kể từ khi tính giờ làm bài trên máy tính sẽ không được dự thi (vắng thi).
+đ) CBCT kiểm tra giấy tờ tùy thân hợp lệ của SV và vật dụng SV mang vào phòng thi, hướng dẫn SV ngồi đúng chỗ quy định (số báo danh là số thứ tự ghi trên máy trạm).
+e) CBCT phổ biến nội quy phòng thi, hướng dẫn quy trình thi, các thao tác kỹ thuật để truy cập vào làm bài thi và nộp bài thi. CBCT ghi vào giữa bảng tên môn thi, thời lượng, trục thời gian thi và cập nhật vào trục thời gian sau mỗi 30 phút làm bài.
+g) Trong giờ làm bài, CBCT chọn vị trí để bao quát từ đầu phòng đến cuối phòng; không trao đổi riêng. Khi SV hỏi điều gì, CBCT trả lời công khai trong phòng thi.
+h) Mười lăm phút (15') trước khi hết giờ làm bài, CBCT thông báo thời gian còn lại cho SV biết.
+i) Hết giờ làm bài, CBCT thông báo SV nộp bài, yêu cầu SV ngồi tại vị trí, CBCT đến từng vị trí để ghi và tô điểm hiển thị từ màn hình máy tính vào bảng điểm, sau đó cho SV kiểm tra và ký tên vào bảng điểm.
+k) CBCT chỉ cho phép SV rời phòng thi khi hết thời gian làm bài và sau khi SV đã nộp bài thi, ký tên xác nhận điểm vào bảng điểm.
+l) CBCT tổng hợp số SV hiện diện, vắng thi, ký và ghi họ tên vào bảng điểm.
+m) Nếu có SV vi phạm nội quy phòng thi, CBCT phải xử lý vi phạm theo các mức độ khiển trách, cảnh cáo... và phải lập biên bản cho SV ký tên. Nếu SV vi phạm không ký vào biên bản thì CBCT ký và đề nghị hai SV khác trong phòng thi ký tên làm chứng vào biên bản.
+
+2. Ghi điểm thi
+a) Sau khi hết thời gian làm bài, sinh viên nộp bài và kết thúc bài thi, CBCT có trách nhiệm ghi và tô điểm hiển thị trên màn hình máy tính vào bảng điểm, yêu cầu sinh viên ký tên vào bảng điểm (CBCT tuyệt đối không được yêu cầu SV ký tên trước khi CBCT ghi và tô điểm).
+b) CBCT nộp bảng điểm cho P. KT-BĐCLGD sau khi kết thúc ca thi. Bảng điểm phải có chữ ký của sinh viên dự thi và CBCT.
+c) P. KT-BĐCLGD gửi bảng điểm về khoa trong vòng 05 ngày làm việc sau khi kết thúc môn thi. Khoa kiểm tra bảng điểm, đối chiếu phần ghi điểm với phần tô điểm, ký xác nhận vào bảng điểm và nộp về Phòng Đào tạo Đại học (bảng điểm phải có đủ chữ ký của SV dự thi, CBCT và đại diện khoa).
+d) Bài thi và điểm thi trên máy tính do Trung tâm Công nghệ thông tin – Dữ liệu lưu trữ và quản lý trên máy chủ đến hết khóa học.
+
+Điều 2. Trách nhiệm của sinh viên
+1. SV phải có mặt tại phòng thi trước 15 phút so với lịch thi. SV vào trễ quá 10 phút kể từ khi tính giờ làm bài trên máy tính sẽ không được dự thi (vắng thi).
+2. Sinh viên phải sử dụng đúng và chịu trách nhiệm bảo mật mật khẩu của tài khoản đăng nhập sinh viên đã được cấp để truy cập vào hệ thống thi trắc nghiệm trên máy vi tính.
+3. Sinh viên chỉ được phép vào phòng thi khi có tên trong danh sách dự thi.
+4. Khi vào phòng thi, sinh viên phải tuân thủ các quy định sau đây:
+a) Xuất trình thẻ SV/giấy tờ tùy thân có dán ảnh cho cán bộ coi thi;
+b) Trường hợp bị mất thẻ sinh viên/các giấy tờ tùy thân có dán ảnh, SV phải có mặt tại Phòng KT-BĐCLGD trước giờ thi để được kiểm tra và cấp giấy vào phòng thi;
+c) Không được mang vào phòng thi vũ khí, chất gây nổ, gây cháy, bia, rượu, giấy than, tài liệu (nếu đề thi không cho phép), thiết bị thu, phát, truyền tin, ghi âm, ghi hình hoặc chứa thông tin có thể lợi dụng để gian lận trong quá trình làm bài thi;
+d) Không mang bất cứ loại bút nào vào phòng thi;
+đ) Giữ trật tự trong phòng thi và ngồi đúng số thứ tự ghi trên máy trạm;
+e) Tuân thủ theo sự hướng dẫn của cán bộ coi thi;
+g) Không được nhìn bài của sinh viên khác, không được trao đổi trong khi thi và thực hiện các hành vi gian lận khác;
+h) Nghiêm cấm mọi hành vi sao chép, truyền tải dữ liệu đề thi, bất kỳ thông tin nào liên quan đến đề thi, câu hỏi thi ra ngoài phòng thi hoặc nhận bài giải từ ngoài vào;
+i) Trong suốt quá trình thi chỉ được phép sử dụng hệ thống thi trắc nghiệm trên máy vi tính. Ngoài ra, không được sử dụng bất cứ ứng dụng nào khác của máy vi tính;
+k) Nghiêm cấm mọi hình thức thi hộ, thi kèm;
+l) Sinh viên chỉ được rời khỏi phòng thi sau khi hết thời gian làm bài và đã ký xác nhận điểm vào Bảng điểm. Nghiêm cấm mọi hình thức ký thay. Sau khi nộp bài và kết thúc, nếu sinh viên không ký vào bảng điểm thì sinh viên đó sẽ nhận điểm không (00) hoặc nếu cán bộ coi thi phát hiện sinh viên ký thay thì kết quả thi của sinh viên ký thay và sinh viên được ký thay sẽ bị hủy.
+
+Điều 3. Tổ chức giải quyết các sự cố trong quá trình thi và các kiến nghị về bài thi
+1. Tổ chức giải quyết các sự cố trong quá trình thi
+Nếu sinh viên gặp phải sự cố trong quá trình thi thì cán bộ coi thi sẽ cho phép sinh viên đó làm bài thi thêm một (01) lần nữa bằng việc sử dụng đề thi dự phòng ngay sau khi có ý kiến đồng ý của lãnh đạo P. KT-BĐCLGD.
+2. Giải quyết kiến nghị về bài thi
+a) Trường hợp câu hỏi thi được phát hiện có sai sót, CBCT phải báo cáo ngay về Phòng KT-BĐCLGD trong ca thi. Lãnh đạo Phòng KT-BĐCLGD có trách nhiệm phối hợp với Trưởng khoa để xem xét, giải quyết ngay trong buổi thi đó.
+b) Khi có yêu cầu phúc khảo, sinh viên gửi đơn về khoa trong vòng 01 tuần kể từ khi kết quả thi được công bố. Lệ phí phúc khảo theo quy định của Trường.
+c) Các khoa phân công giảng viên kiểm tra nội dung bài thi cần phúc khảo, kiểm tra điểm trên hệ thống với bảng ghi điểm, ký biên bản ghi nhận điểm phúc khảo, chuyển giao điểm và biên bản cho Phòng Đào tạo đại học cập nhật điểm nếu có thay đổi, lưu giữ bản sao đồng thời phản hồi kết quả phúc khảo cho SV (không quá 30 ngày kể từ khi nhận được yêu cầu phúc khảo).
+
+Điều 4. Xử lý sinh viên vi phạm nội quy phòng thi
+Những SV vi phạm nội quy phòng thi đều phải được CBCT lập biên bản, tịch thu tang vật và tùy mức độ mà áp dụng các hình thức xử lý sau đây:
+a) Khiển trách đối với những SV phạm lỗi một lần: nhìn bài của bạn, trao đổi với bạn (hình thức này do cán bộ coi thi quyết định tại biên bản được lập). SV bị khiển trách trong khi thi môn nào sẽ bị trừ 25% số điểm bài thi của môn đó.
+b) Cảnh cáo đối với các SV vi phạm một trong các lỗi sau đây:
+- Đã bị khiển trách một lần nhưng trong giờ thi môn đó vẫn tiếp tục vi phạm.
+- Truy cập vào các ứng dụng khác của máy vi tính ngoài hệ thống thi.
+SV bị kỷ luật cảnh cáo trong khi thi môn nào sẽ bị trừ 50% số điểm bài thi của môn đó.
+c) Đình chỉ thi đối với các SV vi phạm một trong các lỗi sau đây:
+- Đã bị cảnh cáo một lần nhưng trong giờ thi môn đó vẫn tiếp tục vi phạm.
+- Mang vật dụng trái phép theo quy định tại Điều 2 của quy định này vào phòng thi. Gửi đề thi ra ngoài khu vực thi hoặc nhận bài giải từ ngoài vào phòng thi (*).
+- Có hành động gây gổ, đe dọa cán bộ có trách nhiệm trong kỳ thi hay đe dọa SV khác (*).
+SV bị kỷ luật đình chỉ thi trong khi thi môn nào sẽ nhận điểm không (00) bài thi môn đó; phải nộp bài làm, ký tên vào bảng ghi điểm và biên bản; ra khỏi phòng thi ngay sau khi CBCT lập xong biên bản.
+SV vi phạm các trường hợp (*) điều này sẽ do Hội đồng kỷ luật cấp Trường xử lý theo quy định.
+d) Sinh viên đi thi hộ hoặc nhờ người thi hộ đều bị kỷ luật ở mức đình chỉ học tập có thời hạn hoặc bị buộc thôi học. Hình thức kỷ luật cụ thể do Hội đồng kỷ luật cấp Trường quyết định.
+
+Điều 5. Xử lý CBCT vi phạm quy chế thi
+a) CBCT nếu vi phạm quy định (bị phát hiện trong khi làm nhiệm vụ hoặc sau khi kỳ thi đã kết thúc), tùy theo hành vi và mức độ sẽ xem xét xử lý các hình thức kỷ luật theo quy định của Nội quy lao động.
+b) Phòng KT-BĐCLGD thống kê danh sách CBCT vi phạm sau mỗi kỳ thi và trình Hội đồng kỷ luật cấp Trường xem xét, ban hành quyết định kỷ luật.
