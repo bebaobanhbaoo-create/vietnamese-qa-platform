@@ -1,0 +1,152 @@
+TRƯỜNG ĐẠI HỌC NGOẠI NGỮ - TIN HỌC TP.HCM
+CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+Độc lập - Tự do - Hạnh phúc
+TP Hồ Chí Minh, ngày tháng năm 2013
+SỐ: 06/ ONT OF
+
+QUY ĐỊNH
+Về đào tạo cao đẳng, đại học chính quy theo hệ thống tín chỉ
+(Ban hành theo Quyết định số: 171/QĐ-BNT- ĐT ngày 28/8/2013)
+
+CHƯƠNG I: NHỮNG QUY ĐỊNH CHUNG
+
+Điều 1: Phạm vi điều chỉnh và đối tượng áp dụng
+* 1.1 Quy định này quy định những vấn đề chung về đào tạo đại học và cao đẳng chính quy theo hệ thống tín chỉ bao gồm: tổ chức đào tạo, kiểm tra và thi học phần, xét và công nhận tốt nghiệp tại trường đại học Ngoại ngữ - Tin học Tp. Hồ Chí Minh.
+* 1.2. Quy định này áp dụng đối với sinh viên (SV) các khóa đào tạo hệ chính quy bậc đại học, cao đẳng từ năm học 2013-2014 kể cả SV hệ liên thông đại học, cao đẳng, không áp dụng đối với SV hệ đào tạo đại học bằng thứ 2, VLVH và các khóa đào tạo từ 2009 trở về trước.
+* 1.3. Những điều không quy định trong quy định này sẽ áp dụng theo quy chế ban hành theo QĐ 43/2007 của Bộ Giáo dục và Đào tạo.
+
+Điều 2: Chương trình giáo dục:
+* 2.1 Chương trình giáo dục (CTGD) thể hiện mục tiêu đào tạo, chuẩn kiến thức, kỹ năng, phạm vi và cấu trúc nội dung giáo dục đại học, cao đẳng, phương pháp và hình thức đào tạo, cách thức đánh giá kết quả giáo dục đối với các môn học, ngành học, ở mỗi lớp, mỗi trình độ đào tạo, bảo đảm liên thông với các CTGD khác.  CTGD của ngành học phải đáp ứng chuẩn đầu ra của ngành đào tạo.
+* 2.2 CTGD được xây dựng trên chương trình khung của Bộ Giáo dục và Đào tạo có tham khảo CTGD của các trường đại học tiên tiến với sự tham gia của các giảng viên, cán bộ quản lý, đại diện các tổ chức, hội nghề nghiệp, cựu sinh viên và các nhà tuyển dụng lao động.
+* 2.3 CTGD được cấu trúc từ các học phần thuộc 2 khối kiến thức: giáo dục đại cương và giáo dục chuyên nghiệp.
+* 2.4 Các học phần trong CTGD được bố trí theo trình tự khoa học.  SV hoàn thành 1 CTGD sẽ được trường xét công nhận tốt nghiệp và cấp văn bằng tương ứng theo quy định của Bộ GD & ĐT.
+
+Điều 3 Định nghĩa các khái niệm:
+* 3.1 Học phần là khối lượng kiến thức tương đối trọn vẹn, thuận tiện cho SV tích lũy trong quá trình học tập.  Mỗi học phần có khối lượng từ 2 đến 5 tín chỉ, được bố trí giảng dạy và phân bố đều trong 1 học kỳ.  Từng học phần được ký hiệu bằng một mã số riêng gọi là mã số môn học.
+    * Đề cương chi tiết của học phần bao gồm các thông tin chính: mục tiêu và yêu cầu, chuẩn kiến thức, kỹ năng, nội dung giảng dạy, tài liệu tham khảo, phương pháp giảng dạy, cách đánh giá học phần.  Giảng viên phải phổ biến công khai đến SV trong buổi học đầu tiên và trên trang web của trường.
+    * Có 2 loại học phần: học phần bắt buộc (chứa đựng nội dung kiến thức chính yếu bắt buộc SV phải tích lũy) và học phần tự chọn (SV tự chọn theo hướng dẫn của Khoa để tích lũy đủ số học phần cần thiết).
+    * Học phần tương đương: Đáp ứng được yêu cầu về nội dung và thời lượng của học phần A.
+    * Học phần thay thế: Thay thế cho một học phần không còn tổ chức giảng dạy.
+    * Học phần tiên quyết: SV phải học & thi đạt mới được theo học học phần tiếp theo.
+    * Học phần song hành: SV phải đăng ký học học phần A thì mới được đăng ký học phần B cùng lúc hoặc ở kỳ tiếp theo.
+    * Các học phần chung (GDTC, GDQP, lý luận chính trị...) tuân theo quy định của Bộ Giáo dục và Đào tạo.
+* 3.2 Tín chỉ: Là đơn vị xác định thời gian, khối lượng học tập của SV.  1 tín chỉ = 15 tiết lý thuyết/thảo luận; hoặc 30-45 tiết thực hành/thí nghiệm; hoặc 45-90 giờ thực tập; hoặc 45-60 giờ làm tiểu luận/đồ án/khóa luận. Một tiết học = 50 phút.  SV phải dành ít nhất 30 giờ chuẩn bị cá nhân cho 1 tín chỉ (1 tiết lên lớp = 2 giờ chuẩn bị).
+* 3.3 Tín chỉ học phí: Dùng để lượng hóa chi phí giảng dạy.  Học phí = tổng số tín chỉ học phí x mức tiền học phí/tín chỉ.  Mức học phí do trường quy định hàng năm.
+
+Điều 4: Chuẩn đầu ra của chương trình đào tạo
+* a. Chuẩn kiến thức kỹ năng là mức tối thiểu người học phải đạt sau khi kết thúc 1 CTGD.
+* b. Là căn cứ để biên soạn giáo trình và đánh giá SV.
+* c. Phải thể hiện mục tiêu giáo dục, đáp ứng thực tiễn hội nhập, và cụ thể hóa thành tiêu chí khách quan.  Các tổ Bộ môn/Khoa xây dựng, thông qua Hội đồng khoa học trường thẩm định và công bố.
+
+Điều 5: Học kỳ, năm học, khóa học
+* 5.1 Học kỳ: Một năm học có 3 học kỳ (2 học kỳ chính, 1 học kỳ hè).  Học kỳ chính có 15 tuần thực học, 2-3 tuần thi. Học kỳ phụ có ít nhất 5 tuần thực học, 1 tuần thi.
+* 5.2 Khóa học: Thời gian tối đa hoàn thành khóa cao đẳng là 3 năm + 4 học kỳ; đại học là 4 năm + 4 học kỳ (theo quy chế 43 của Bộ GD&ĐT).
+
+Điều 6: Chỉ nam
+Tài liệu chính thức giới thiệu về nhà trường, CTGD và các học phần.
+
+Điều 7: Ứng dụng công nghệ thông tin trong quản lý đào tạo
+Thực hiện theo quyết định 58/2007/BGD&ĐT ngày 12/10/2007.
+
+---
+
+CHƯƠNG II: QUY TRÌNH ĐÀO TẠO
+
+Điều 8: Thông tin đào tạo dành cho SV
+* 8.1 Thông tin nhập học: Văn bản pháp quy, kế hoạch đào tạo, học phí, tài liệu, trách nhiệm và quyền lợi của SV.
+* 8.2 Thông tin chuẩn bị học kỳ mới: Quy trình học vụ, thời khóa biểu dự kiến, các thay đổi CTGD.
+* 8.3 Thông tin khác tại Khoa: Lịch giảng dạy, lịch kiểm tra giữa kỳ/cuối kỳ.
+
+Điều 9: Trách nhiệm của Trường, Giảng viên, Giảng viên cố vấn và Sinh viên
+* 9.1 Nhà trường: Tổ chức tìm hiểu cơ cấu, văn bản pháp quy, CTGD đầu khóa.
+* 9.2 Giảng viên: Chuẩn bị đề cương, hướng dẫn phương pháp học, đảm bảo giờ làm việc, hướng dẫn NCKH.
+* 9.3 Giảng viên cố vấn: Tư vấn kế hoạch học tập, NCKH, định hướng nghề nghiệp, rèn luyện. Do Hiệu trưởng bổ nhiệm.
+* 9.4 Sinh viên: Đóng học phí, nắm vững CTGD, theo dõi thông báo, thực hiện đầy đủ yêu cầu học tập/thi cử, tham gia hoạt động đoàn thể.
+
+Điều 10: Lớp học
+* 10.1 Lớp sinh viên: Tập hợp SV cùng ngành, khóa để sinh hoạt và quản lý.
+* 10.2 Lớp học phần: Gồm SV học cùng 1 học phần, cùng TKB. Tối thiểu 40 SV (lớp chung ít nhất 80 SV; chuyên ngành/trả nợ tối thiểu 15 SV).
+
+Điều 11: Đăng ký học
+* SV viết phiếu đăng ký học phần mới theo lịch với sự hướng dẫn của CVHT.
+* Trường xếp lịch dựa trên nguồn lực.
+* SV được bổ sung/thay đổi học phần trong vòng 2 tuần từ khi công bố TKB (phải được Trưởng khoa xác nhận). Tự ý thay đổi không được giải quyết.
+* Điều kiện: Thỏa mãn học phần tiên quyết/song hành và lớp còn chỗ.
+* Khối lượng: SV bình thường ~20 TC/kỳ; SV yếu tối thiểu 12 TC/kỳ; SV giỏi tối đa 30 TC/kỳ.
+
+---
+
+CHƯƠNG III: ĐÁNH GIÁ KẾT QUẢ HỌC TẬP HỌC PHẦN
+
+Điều 12: Thang điểm đánh giá học phần
+Điểm theo thang 10, làm tròn đến 1 chữ số lẻ.
+* Đạt: A (8.5-10) = Giỏi; B (7.0-8.4) = Khá; C (5.5-6.9) = Trung Bình; D (4.0-5.4) = Trung Bình yếu.
+* Không đạt: F (dưới 4.0) = Kém.
+* Ký hiệu khác: I (chưa đủ dữ liệu), X (chưa nhận kết quả), R (được phép chuyển điểm).
+
+Điều 13: Điểm thành phần của 1 học phần
+* Gồm: Kiểm tra thường xuyên, chuyên cần, giữa kỳ, thực hành, bài tập lớn, tích cực học tập, và thi cuối kỳ.
+* Điểm thi cuối kỳ bắt buộc có trọng số $\ge$ 50%. Làm tròn đến 0.5.
+
+Điều 14: Tổ chức thi kết thúc học phần
+Mỗi học kỳ 1 kỳ thi. Khoa ra đề và chấm thi. Hình thức thi (viết, vấn đáp, tiểu luận...) ghi rõ trong đề cương.
+
+Điều 15: Phúc tra và khiếu nại điểm
+Điểm quá trình khiếu nại trực tiếp trên lớp. Điểm cuối kỳ nộp đơn về Khoa trong vòng 5 ngày kể từ ngày công bố.
+
+Điều 16: Bảng ghi điểm học phần
+GV ghi điểm thang 10 làm tròn 0.5, ký tên, Khoa duyệt, nộp Phòng Đào tạo quét máy. Điểm tổng kết tự động làm tròn đến 0.1.
+
+Điều 17: Đăng ký học lại
+* Học phần bắt buộc điểm F: Học lại đến khi đạt.
+* Học phần tự chọn điểm F: Học lại hoặc đổi môn tương đương.
+* Điểm $\ge$ 4.0: Được học lại cải thiện (lấy điểm cao nhất). Đặc biệt điểm D (4.0 - 5.4) nên học lại để đảm bảo TBCTL $\ge$ 5.0.
+
+Điều 18: Điểm trung bình học kỳ (ĐTBHK) và điểm trung bình chung tích lũy (TBCTL)
+* 18.1 ĐTBHK: Trung bình có hệ số tín chỉ của các học phần đăng ký trong học kỳ, làm tròn 2 chữ số thập phân.
+* 18.2 TBCTL: Tính từ đầu khóa đến thời điểm tính (kể cả điểm bảo lưu).
+* 18.3 TBCTL ngành: Đánh giá học lực toàn khóa.
+* 18.4 Xếp loại:
+
+| Xếp Loại | Thang điểm hệ 10 | Điểm chữ | Thang điểm 4 (tham khảo) |
+| :--- | :--- | :--- | :--- |
+| Đạt - Xuất sắc | Từ 9.0 đến 10.0 | A+ | 4.0 |
+| Đạt - Giỏi | Từ 8.0 đến cận 9.0 | A | 3.5 |
+| Đạt - Khá | Từ 7.0 đến cận 8.0 | B+ | 3.0 |
+| Đạt - TB Khá | Từ 6.0 đến cận 7.0 | B | 2.5 |
+| Đạt - Trung Bình | Từ 5.0 đến cận 6.0 | C | 2.0 |
+| Không đạt - Yếu | Từ 4.0 đến cận 5.0 | D+ | 1.5 |
+| Không đạt - Kém | Từ 3.0 đến cận 4.0 | D | 1.0 |
+| Không đạt | Từ 0.0 đến cận 3.0 | F | 0.0 |
+
+---
+
+CHƯƠNG IV: XÉT VÀ CÔNG NHẬN TỐT NGHIỆP
+
+Điều 19: Làm khóa luận tốt nghiệp
+SV làm khóa luận vào học kỳ cuối (hoặc học thêm 2-4 học phần thay thế). Chấm theo thang điểm 10, tính vào TBCTL.
+
+Điều 20: Điều kiện xét công nhận tốt nghiệp
+* Không bị truy cứu TNHS/kỷ luật đình chỉ.
+* Có chứng chỉ GDTC, GDQP, Ngoại ngữ, Tin học.
+* Tích lũy $\ge$ 140 TC (Đại học) hoặc $\ge$ 104 TC (Cao đẳng).
+* TBCTL toàn khóa $\ge$ 5.0 (thang 10). Không quá thời gian tối đa học.
+* Hội đồng họp 1 lần/học kỳ chính xét tốt nghiệp.
+
+Điều 21: Xếp loại tốt nghiệp, bảo lưu kết quả, chuyển loại hình
+* Xếp loại theo Điều 18. Hạ 1 mức (Xuất sắc xuống Giỏi) nếu thi lại quá 5% tổng tín chỉ hoặc từng bị kỷ luật từ Cảnh cáo trở lên.
+* SV nợ GDQP/GDTC hết hạn học, được phép trả nợ trong 5 năm tiếp theo.
+* SV không tốt nghiệp được cấp chứng nhận các học phần đã đạt, xem xét chuyển qua hệ Cao đẳng.
+
+---
+
+CHƯƠNG V: XỬ LÝ VI PHẠM
+
+Điều 22: Xử lý kỷ luật thi & kiểm tra
+* Theo quy chế tuyển sinh hiện hành của Bộ GD&ĐT. Vi phạm xử lý trực tiếp vào điểm học phần.
+* Thi hộ/nhờ thi hộ: Đình chỉ 1 năm (lần 1), buộc thôi học (lần 2).
+
+(Mộc dấu & Chữ ký)
+HIỆU TRƯỞNG
+TRƯỜNG ĐẠI HỌC NGOẠI NGỮ - TIN HỌC THÀNH PHỐ HỒ CHÍ MINH
+PGS. Bùi Ngọc Thọ
