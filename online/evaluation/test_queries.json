@@ -1,0 +1,202 @@
+[
+  {
+    "query": "điều kiện xét tốt nghiệp",
+    "relevant_chunk_ids": ["3208_2_d97", "3208_4_d52", "3208_3_d59"]
+  },
+  {
+    "query": "lịch nộp học phí",
+    "relevant_chunk_ids": ["3352_p0", "3618_p0", "3748_p0", "3203_p0", "3363_p0"]
+  },
+  {
+    "query": "quy định điểm số xét học bổng",
+    "relevant_chunk_ids": ["3271_p0", "3476_d31", "3167_p0", "3476_d5", "3476_d9"]
+  },
+  {
+    "query": "thủ tục đăng ký môn học",
+    "relevant_chunk_ids": ["3317_p0", "3289_p0", "3244_p0", "3453_p0"]
+  },
+  {
+    "query": "lịch thi học kỳ",
+    "relevant_chunk_ids": ["3263_p0", "3146_p0"]
+  },
+  {
+    "query": "quy định về học bổng khuyến khích học tập",
+    "relevant_chunk_ids": ["3278_d80", "3476_d1", "3278_d84"]
+  },
+  {
+    "query": "thông báo nghỉ tết nguyên đán",
+    "relevant_chunk_ids": ["3486_p0", "3740_p0"]
+  },
+  {
+    "query": "điểm rèn luyện sinh viên",
+    "relevant_chunk_ids": ["3438_p0", "3678_2_d7", "3678_1_d11"]
+  },
+  {
+    "query": "đăng ký học lại học phần",
+    "relevant_chunk_ids": ["3208_2_d46", "3208_2_d94", "3208_3_d32"]
+  },
+  {
+    "query": "thời gian đăng ký học phần học kỳ",
+    "relevant_chunk_ids": ["3244_p0", "3453_p0", "3583_p0", "3208_2_d39"]
+  },
+  {
+    "query": "quy chế thi cử và kiểm tra",
+    "relevant_chunk_ids": ["3208_1_d24", "3208_3_d41", "3208_3_d87"]
+  },
+  {
+    "query": "xử lý sinh viên vi phạm quy định",
+    "relevant_chunk_ids": ["3208_3_d87", "3278_d31", "3278_d91", "3208_4_d72"]
+  },
+  {
+    "query": "lịch học kỳ 1 năm học mới",
+    "relevant_chunk_ids": ["3425_p0", "3432_p0", "3555_p0", "3769_p0"]
+  },
+  {
+    "query": "mức học phí theo tín chỉ",
+    "relevant_chunk_ids": ["3545_p0", "3677_p0", "3574_p0"]
+  },
+  {
+    "query": "xét học bổng tân sinh viên",
+    "relevant_chunk_ids": ["3476_d31", "3476_d29", "3680_p0", "3278_d80"]
+  },
+  {
+    "query": "hạng tốt nghiệp xuất sắc điểm trung bình tích lũy từ 3.60",
+    "relevant_chunk_ids": ["3208_4_d54", "3208_3_d47"]
+  },
+  {
+    "query": "nội quy phòng thi sinh viên đến chậm quá 10 phút không được vào",
+    "relevant_chunk_ids": ["3561_1_d1"]
+  },
+  {
+    "query": "sinh viên đóng học phí muộn bị đình chỉ thi hủy điểm học phần",
+    "relevant_chunk_ids": ["3208_4_d74"]
+  },
+  {
+    "query": "cảnh báo học tập tín chỉ không đạt vượt quá 50 phần trăm khối lượng đăng ký",
+    "relevant_chunk_ids": ["3208_4_d44", "3208_3_d49"]
+  },
+  {
+    "query": "buộc thôi học số lần cảnh báo học tập vượt quá giới hạn",
+    "relevant_chunk_ids": ["3208_4_d46", "3208_3_d50"]
+  },
+  {
+    "query": "chuẩn đầu ra tin học chứng chỉ MOS Word Excel",
+    "relevant_chunk_ids": ["3209_2_d2"]
+  },
+  {
+    "query": "xử lý vi phạm nội quy phòng thi khiển trách cảnh cáo đình chỉ",
+    "relevant_chunk_ids": ["3561_1_d3", "3678_1_d2"]
+  },
+  {
+    "query": "thủ tục xin chuyển ngành làm đơn nộp phòng đào tạo đại học",
+    "relevant_chunk_ids": ["3208_4_d61", "3208_4_d63"]
+  },
+  {
+    "query": "học bổng chính sách HUFLIT sinh viên khuyết tật mồ côi cha lẫn mẹ",
+    "relevant_chunk_ids": ["3278_d85", "3476_d4", "3612_d3"]
+  },
+  {
+    "query": "điểm rèn luyện hoàn thành tuần sinh hoạt công dân cộng 10 điểm",
+    "relevant_chunk_ids": ["3678_1_d4"]
+  },
+  {
+    "query": "sinh viên vắng mặt thi không có lý do chính đáng nhận điểm 0",
+    "relevant_chunk_ids": ["3208_4_d33"]
+  },
+  {
+    "query": "điều kiện đăng ký học cùng lúc hai chương trình trình độ năm thứ hai",
+    "relevant_chunk_ids": ["3208_3_d77", "3208_3_d78", "3208_4_d70"]
+  },
+  {
+    "query": "kết quả học tập được bảo lưu khi sinh viên bị buộc thôi học vì cảnh báo",
+    "relevant_chunk_ids": ["3208_4_d48"]
+  },
+  {
+    "query": "học lại để cải thiện điểm các học phần bị điểm D",
+    "relevant_chunk_ids": ["3208_4_d36", "3208_2_d48"]
+  },
+  {
+    "query": "điểm chữ A B C D F quy đổi thang điểm 4 tính điểm trung bình",
+    "relevant_chunk_ids": ["3208_4_d35", "3208_4_d39", "3208_3_d44"]
+  },
+  {
+    "query": "tôi muốn nghỉ học một học kỳ rồi quay lại học tiếp có được không",
+    "relevant_chunk_ids": ["3208_4_d57", "3208_4_d58", "3208_4_d60"]
+  },
+  {
+    "query": "học lực quá kém kéo dài thì nhà trường sẽ làm gì với sinh viên đó",
+    "relevant_chunk_ids": ["3208_4_d44", "3208_4_d45", "3208_4_d46", "3208_3_d49", "3208_3_d50"]
+  },
+  {
+    "query": "muốn học thêm một ngành nữa bên cạnh ngành đang học có được không",
+    "relevant_chunk_ids": ["3208_3_d77", "3208_3_d78", "3208_4_d70"]
+  },
+  {
+    "query": "muốn chuyển sang học ở một trường đại học khác thì làm thế nào",
+    "relevant_chunk_ids": ["3208_4_d64", "3208_4_d65"]
+  },
+  {
+    "query": "thầy cô hướng dẫn làm luận văn cuối khóa cần có trình độ học vấn như thế nào",
+    "relevant_chunk_ids": ["3344_1_d35"]
+  },
+  {
+    "query": "nhà trường có hỗ trợ gì cho sinh viên không có tiền đóng học phí không",
+    "relevant_chunk_ids": ["3612_d2", "3612_d3", "3612_d4", "3278_d55"]
+  },
+  {
+    "query": "mang điện thoại vào phòng thi thì có bị phạt gì không",
+    "relevant_chunk_ids": ["3561_1_d3"]
+  },
+  {
+    "query": "học bao nhiêu tín chỉ tích lũy thì được coi là sinh viên năm 3",
+    "relevant_chunk_ids": ["3208_3_d48"]
+  },
+  {
+    "query": "điểm GPA tốt nghiệp bao nhiêu thì được xếp loại giỏi",
+    "relevant_chunk_ids": ["3208_4_d54", "3208_3_d47"]
+  },
+  {
+    "query": "nếu trượt môn học tự chọn thì có bắt buộc phải học lại không",
+    "relevant_chunk_ids": ["3208_4_d15", "3208_2_d47"]
+  },
+  {
+    "query": "sinh viên nộp bằng cấp giả để được vào học sẽ bị xử lý thế nào",
+    "relevant_chunk_ids": ["3208_4_d73"]
+  },
+  {
+    "query": "sinh viên cần làm những gì để nhận được điểm rèn luyện cao",
+    "relevant_chunk_ids": ["3678_1_d2", "3678_1_d3", "3678_1_d4", "3678_1_d5"]
+  },
+  {
+    "query": "ai được phép xin hoãn thời gian đóng tiền học",
+    "relevant_chunk_ids": ["3806_p0"]
+  },
+  {
+    "query": "sinh viên có quyền và nghĩa vụ gì khi học tại trường",
+    "relevant_chunk_ids": ["3278_d8", "3278_d9", "3278_d10", "3278_d11"]
+  },
+  {
+    "query": "sinh viên cần đáp ứng điều kiện gì để được cấp bằng tốt nghiệp đại học",
+    "relevant_chunk_ids": ["3208_4_d52", "3208_3_d59", "3208_2_d97"]
+  },
+  {
+    "query": "cách tính điểm trung bình học kỳ và điểm trung bình tích lũy",
+    "relevant_chunk_ids": ["3208_4_d40", "3208_2_d95"]
+  },
+  {
+    "query": "giảng viên cố vấn học tập có nhiệm vụ và trách nhiệm gì với sinh viên",
+    "relevant_chunk_ids": ["3273_1_d8", "3273_1_d10", "3273_1_d12"]
+  },
+  {
+    "query": "khảo sát lấy ý kiến sinh viên về chất lượng giảng dạy của giảng viên",
+    "relevant_chunk_ids": ["3814_p0", "3808_p0"]
+  },
+  {
+    "query": "quy định về sử dụng quỹ hỗ trợ sinh viên hệ chính quy mượn tiền học phí",
+    "relevant_chunk_ids": ["3612_d2", "3612_d3", "3612_d4"]
+  },
+  {
+    "query": "hỗ trợ tài chính học bổng cho sinh viên xuất sắc và sinh viên có hoàn cảnh khó khăn",
+    "relevant_chunk_ids": ["3278_d55", "3278_d80", "3278_d85"]
+  }
+]
