@@ -12,3 +12,5 @@ tqdm
 scikit-learn
 underthesea
 pyvi
+gunicorn
+uvicorn
