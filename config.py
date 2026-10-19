@@ -2,7 +2,7 @@
 
 # Chunking
 CHUNK_SIZE = 400
-CHUNK_OVERLAP = 80
+CHUNK_OVERLAP = 0  # committed index was built with 0; 80-char overlap lowered Hybrid R@10 0.723 -> 0.669
 MIN_CHUNK_SIZE = 100
 
 # Retrieval

@@ -73,6 +73,7 @@ def main():
         choices=["bm25", "dense", "hybrid", "all"],
         default="hybrid",
     )
+    parser.add_argument("--output", type=Path, help="Lưu kết quả ra file JSON")
     args = parser.parse_args()
 
     queries = json.loads(TEST_QUERIES_PATH.read_text(encoding='utf-8'))
@@ -107,6 +108,17 @@ def main():
     print(f"  {'-' * 38}")
     for label, res in results.items():
         print_results(label, res, k)
+
+    if args.output:
+        report = {
+            'k': k,
+            'num_queries': len(queries),
+            'embedding_model': EMBEDDING_MODEL,
+            'results': results,
+        }
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+        print(f"\nĐã lưu → {args.output}")
 
 
 if __name__ == "__main__":
