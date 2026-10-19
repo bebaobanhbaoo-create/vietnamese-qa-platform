@@ -37,6 +37,19 @@ The annotation page keeps progress in the browser, so labelling can stop and res
 - For time-bound questions ("lịch thi học kỳ 1 năm 2025-2026"), only the announcement for that period is relevant.
 - If nothing in the pool answers the question, press `N`, even if you suspect the answer exists elsewhere. Add a note in the commit instead.
 
+## Comparing chunkings fairly
+
+Labels point at **label units**: the chunks of the original (v1) chunking, frozen in `eval/label_units.json`. Re-chunking would otherwise invalidate every label. A chunk from any other chunking is projected onto the units it covers: same source record, and at least 50% of the unit's word 3-grams inside the chunk or at least 50% of the chunk's 3-grams from the unit ([projection.py](../src/huflit_qa/evaluation/projection.py)). Every configuration is therefore scored against the same relevant set.
+
+- Recall counts relevant units covered by the top-k chunks.
+- nDCG, precision and MRR count a chunk as a hit if it covers a relevant unit not covered higher up.
+- With the v1 chunking the projection is the identity, so the numbers equal plain chunk-level scoring.
+- Long chunks can cover several units, so the report also shows **words per retrieved chunk**: a gain bought with much longer chunks costs prompt space later.
+
+## Significance
+
+The dev split has 30 queries, so differences of a few points can be noise. `scripts/run_experiments.py` reports each configuration's Hybrid nDCG@10 gain over the baseline with a 95% **paired bootstrap** confidence interval (10,000 resamples over queries). A gain whose interval includes 0 is not treated as established.
+
 ## Metrics
 
 Binary relevance, computed by `huflit-qa eval` ([metrics.py](../src/huflit_qa/evaluation/metrics.py)):

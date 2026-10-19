@@ -157,17 +157,33 @@ def chunk_thong_bao(record, cfg: ChunkingSettings):
 def chunk_all(quy_che_path: Path, thong_bao_path: Path, cfg: ChunkingSettings) -> list[dict]:
     """Load both flat JSONs and return all chunks."""
     chunks = []
+    if cfg.strategy == "v2":
+        from huflit_qa.processing import chunker_v2
+
+        quy_che_fn, thong_bao_fn = chunker_v2.chunk_quy_che, chunker_v2.chunk_thong_bao
+    else:
+        quy_che_fn, thong_bao_fn = chunk_quy_che, chunk_thong_bao
 
     quy_che = json.loads(quy_che_path.read_text(encoding="utf-8"))
     for rec in quy_che:
         if rec.get("content") is None or rec.get("content_status") in ("image", "empty"):
             continue
-        chunks.extend(chunk_quy_che(rec, cfg))
+        chunks.extend(quy_che_fn(rec, cfg))
 
     thong_bao = json.loads(thong_bao_path.read_text(encoding="utf-8"))
     for rec in thong_bao:
         if rec.get("content") is None or rec.get("content_status") in ("image", "empty"):
             continue
-        chunks.extend(chunk_thong_bao(rec, cfg))
+        chunks.extend(thong_bao_fn(rec, cfg))
 
     return chunks
+
+
+def index_text(chunk: dict, context_prefix: bool) -> str:
+    """Text that BM25 and the embedding model see; ``text`` itself is what gets displayed."""
+    if not context_prefix:
+        return chunk["text"]
+    context = chunk.get("context") or " > ".join(
+        p for p in (chunk["doc_title"], chunk.get("chunk_title")) if p
+    )
+    return f"{context}\n\n{chunk['text']}"

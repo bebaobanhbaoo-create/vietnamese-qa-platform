@@ -1,70 +1,36 @@
-"""Dense index: build (FAISS), save, load, search."""
+"""Dense index: exact inner-product search over L2-normalised embeddings (FAISS IndexFlatIP).
+
+Exact search is the right choice at this scale (~10^3 vectors, < 1 ms per query); approximate
+indexes (IVF, HNSW) only pay off from ~10^5 vectors and would cost recall here.
+"""
 
 import json
+from pathlib import Path
 
 import faiss
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
 
-def load_encoder(model_name: str) -> SentenceTransformer:
-    """Load from the local HF cache first so repeated runs work offline."""
-    try:
-        return SentenceTransformer(model_name, local_files_only=True)
-    except Exception:
-        return SentenceTransformer(model_name)
+def build_dense(vectors: np.ndarray) -> faiss.Index:
+    index = faiss.IndexFlatIP(vectors.shape[1])
+    index.add(vectors)
+    return index
 
 
-def build_dense(chunks, model_name):
-    """Encode all chunk texts, build FAISS IndexFlatIP.
-    Returns (faiss_index, meta_list).
-    meta_list[i] = metadata dict for FAISS vector at position i.
-    """
-    model = load_encoder(model_name)
-
-    texts = []
-    for c in chunks:
-        texts.append(c["text"])
-
-    embeddings = model.encode(texts, show_progress_bar=True, normalize_embeddings=True)
-    embeddings = np.array(embeddings, dtype="float32")
-
-    index = faiss.IndexFlatIP(embeddings.shape[1])
-    index.add(embeddings)
-
-    meta = []
-    for c in chunks:
-        meta.append(
-            {
-                "chunk_id": c["chunk_id"],
-                "text": c["text"],
-                "doc_title": c["doc_title"],
-                "chunk_title": c.get("chunk_title"),
-                "source_url": c["source_url"],
-                "date_posted": c.get("date_posted"),
-            }
-        )
-    return index, meta
-
-
-def save_dense(index, meta, index_path, meta_path):
+def save_dense(index: faiss.Index, chunk_ids: list[str], index_path: Path, ids_path: Path) -> None:
+    """Row i of the FAISS index is ``chunk_ids[i]``; chunk text and metadata live in chunks.json."""
     index_path.parent.mkdir(parents=True, exist_ok=True)
     faiss.write_index(index, str(index_path))
-    meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+    ids_path.write_text(json.dumps(chunk_ids), encoding="utf-8")
 
 
-def load_dense(index_path, meta_path):
-    index = faiss.read_index(str(index_path))
-    meta = json.loads(meta_path.read_text(encoding="utf-8"))
-    return index, meta
+def load_dense(index_path: Path, ids_path: Path) -> tuple[faiss.Index, list[str]]:
+    return faiss.read_index(str(index_path)), json.loads(ids_path.read_text(encoding="utf-8"))
 
 
-def search_dense(index, meta, model, query, top_k):
+def search_dense(
+    index: faiss.Index, chunk_ids: list[str], query_vector: np.ndarray, top_k: int
+) -> list[tuple[str, float]]:
     """Return [(chunk_id, score), ...] sorted by score desc."""
-    q_vec = model.encode([query], normalize_embeddings=True).astype("float32")
-    scores, indices = index.search(q_vec, top_k)
-    results = []
-    for score, idx in zip(scores[0], indices[0], strict=True):
-        if idx >= 0:
-            results.append((meta[idx]["chunk_id"], float(score)))
-    return results
+    scores, rows = index.search(query_vector.reshape(1, -1), top_k)
+    return [(chunk_ids[i], float(s)) for s, i in zip(scores[0], rows[0], strict=True) if i >= 0]

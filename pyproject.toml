@@ -19,6 +19,7 @@ dependencies = [
     # Indexing & retrieval
     "numpy==2.3.5",
     "rank-bm25==0.2.2",
+    "pyvi==0.1.1",
     "faiss-cpu==1.10.0",
     "torch==2.5.1",
     "sentence-transformers==3.4.1",

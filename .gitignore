@@ -12,3 +12,4 @@ generate_commits*.sh
 .ruff_cache/
 eval/annotation/pool.json
 eval/annotation/labels*.json
+data/experiments/

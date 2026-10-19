@@ -16,7 +16,7 @@ portal.huflit.edu.vn ──► scrape ──► process ──► chunk ──�
 | 1. Scrape announcements, regulations and attachment links | `huflit-qa scrape` | `data/raw/`, `data/processed/by_doc_type/` |
 | 1b. Normalise downloaded attachments, extract PDF text | `huflit-qa normalize-attachments`, `huflit-qa extract-pdf` | `data/attachments/**.txt` |
 | 2. Flatten into records (one per web page or attachment) | `huflit-qa process` | `data/processed/by_doc_type/*_flat.json` |
-| 3. Chunk by article/clause, build BM25 and FAISS indexes | `huflit-qa index` | `data/processed/chunks.json`, `data/index/` |
+| 3. Chunk by article/clause, build BM25 and FAISS indexes | `huflit-qa index` | `data/index/` (chunks, BM25, FAISS, `manifest.json`) |
 | 4. Query | `huflit-qa query "..."` | ranked chunks |
 | 5. Evaluate | `huflit-qa eval` | nDCG, Recall, Hit, MRR, latency |
 
@@ -24,8 +24,8 @@ Code lives in `src/huflit_qa/`:
 
 ```
 ingest/       crawler, HTML parser, classification, attachment and PDF handling
-processing/   flat records, hand-corrected text sync, Điều/Khoản-aware chunker
-indexing/     BM25 (rank_bm25) and dense (sentence-transformers + FAISS) indexes
+processing/   flat records, hand-corrected text sync, Điều/Khoản-aware chunkers (v1, v2)
+indexing/     BM25 (rank_bm25, optional pyvi word segmentation), dense encoders (sentence-transformers) and FAISS, index manifest
 retrieval/    hybrid retriever and Reciprocal Rank Fusion
 evaluation/   P@k, R@k, MRR and the evaluation runner
 config.py     settings (pydantic-settings, overridable via HUFLIT_* env vars or .env)
