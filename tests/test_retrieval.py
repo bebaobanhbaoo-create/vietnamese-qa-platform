@@ -1,5 +1,5 @@
 import pytest
-from evaluation.metrics import precision_at_k, recall_at_k, mrr
+from online.evaluation.metrics import precision_at_k, recall_at_k, mrr
 
 class TestRetrievalMetrics:
     """Test suite for retrieval evaluation metrics."""
