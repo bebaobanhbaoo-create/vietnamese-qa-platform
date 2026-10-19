@@ -69,6 +69,20 @@ huflit-qa eval --split dev            # while tuning
 huflit-qa eval --split test --output eval/results/<date>_<change>.json
 ```
 
+## Answers
+
+`huflit-qa eval-answers` runs the full pipeline on labelled queries and scores answers without a judge model, using the citations ([answer_eval.py](../src/huflit_qa/evaluation/answer_eval.py)):
+
+| Metric | Definition |
+|---|---|
+| grounded | Refuses, or cites at least one shown source and no non-existent source |
+| context hit | Some shown source is relevant: the ceiling set by retrieval |
+| supported | Cites at least one relevant source (answerable queries) |
+| citation precision | Share of cited sources that are relevant |
+| false / correct refusal | Refusal rate on answerable queries / on queries labelled as having no answer |
+
+These metrics do not check that each sentence is faithful to its source. The answers are saved next to the report (`*.answers.jsonl`); 20 of them are reviewed by hand for faithfulness, and the agreement is reported with the results.
+
 ## Current results
 
 See [eval/BASELINE.md](../eval/BASELINE.md).
