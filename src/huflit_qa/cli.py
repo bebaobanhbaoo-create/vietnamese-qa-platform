@@ -7,7 +7,7 @@ from typing import Annotated
 
 import typer
 
-from huflit_qa.config import get_settings
+from huflit_qa.config import Settings, get_settings
 from huflit_qa.log import setup_logging
 
 app = typer.Typer(
@@ -15,6 +15,12 @@ app = typer.Typer(
     no_args_is_help=True,
 )
 logger = logging.getLogger("huflit_qa")
+
+
+def with_reranker(settings: Settings, model: str | None) -> Settings:
+    if not model:
+        return settings
+    return settings.model_copy(update={"rerank": settings.rerank.model_copy(update={"model": model})})
 
 
 @app.callback()
@@ -86,23 +92,35 @@ def index() -> None:
 def query(
     text: Annotated[str, typer.Argument(help="Question in Vietnamese")],
     top_k: Annotated[int | None, typer.Option("--top-k", "-k")] = None,
+    doc_type: Annotated[str | None, typer.Option(help="quy_che | thong_bao")] = None,
+    issuer: Annotated[str | None, typer.Option(help='Issuing unit, e.g. "Phòng Đào tạo"')] = None,
+    year_from: Annotated[int | None, typer.Option(help="Only documents posted from this year")] = None,
+    newest_only: Annotated[bool, typer.Option(help="Only the newest version of each regulation")] = False,
+    rerank: Annotated[str | None, typer.Option(help="Cross-encoder model to rerank with")] = None,
 ) -> None:
-    """Step 4: hybrid search for a question."""
+    """Step 4: hybrid search for a question, with optional filters and reranking."""
+    from huflit_qa.retrieval.filters import SearchFilters
     from huflit_qa.retrieval.hybrid import HybridRetriever
 
-    results = HybridRetriever(get_settings()).retrieve(text, top_k=top_k)
+    settings = with_reranker(get_settings(), rerank)
+    filters = SearchFilters(
+        doc_type=doc_type, issuer_unit=issuer, year_from=year_from, newest_only=newest_only
+    )
+    results = HybridRetriever(settings).retrieve(text, top_k=top_k, filters=filters)
     typer.echo(f"\nQuery: {text}\nTop {len(results)} results:\n")
     for i, r in enumerate(results, 1):
         typer.echo(f"[{i}] {r['chunk_title'] or r['doc_title']}")
-        typer.echo(f"    Score: {r['score']:.4f}")
+        dates = f"posted {r['date_posted']}" + (f", issued {r['issued_date']}" if r["issued_date"] else "")
+        typer.echo(f"    Score: {r['score']:.4f} | {r['issuer_unit']} | {dates}")
         typer.echo(f"    URL: {r['source_url']}")
         typer.echo(f"    {r['text'][:200]}...\n")
 
 
 @app.command("eval")
 def evaluate(
-    mode: Annotated[str, typer.Option(help="bm25 | dense | hybrid | all")] = "all",
+    mode: Annotated[str, typer.Option(help="bm25 | dense | hybrid | rerank | all")] = "all",
     split: Annotated[str, typer.Option(help="dev (for tuning) | test (for reporting) | all")] = "all",
+    rerank: Annotated[str | None, typer.Option(help="Cross-encoder model for the rerank mode")] = None,
     output: Annotated[Path | None, typer.Option(help="Save the report as JSON")] = None,
 ) -> None:
     """Step 5: evaluate retrieval on eval/testset.jsonl."""
@@ -114,7 +132,9 @@ def evaluate(
         raise typer.BadParameter("split must be dev, test or all")
     modes = MODES if mode == "all" else (mode,)
 
-    report = run_evaluation(get_settings(), modes, split=None if split == "all" else split)
+    report = run_evaluation(
+        with_reranker(get_settings(), rerank), modes, split=None if split == "all" else split
+    )
     typer.echo(format_report(report))
     if output:
         output.parent.mkdir(parents=True, exist_ok=True)

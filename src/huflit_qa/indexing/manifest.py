@@ -25,6 +25,7 @@ def build_manifest(settings: Settings, num_chunks: int, dim: int) -> dict:
         "chunking": settings.chunking.model_dump(),
         "bm25": settings.bm25.model_dump(),
         "embedding": {**settings.embedding.model_dump(), "dim": dim},
+        "index": settings.index.model_dump(),
     }
 
 

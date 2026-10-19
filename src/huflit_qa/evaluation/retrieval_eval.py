@@ -17,8 +17,8 @@ from huflit_qa.evaluation.projection import build_projection, load_units
 from huflit_qa.evaluation.testset import load_testset, select
 from huflit_qa.retrieval.hybrid import HybridRetriever
 
-MODES = ("bm25", "dense", "hybrid")
-LABELS = {"bm25": "BM25", "dense": "Dense", "hybrid": "Hybrid"}
+MODES = ("bm25", "dense", "hybrid", "rerank")
+LABELS = {"bm25": "BM25", "dense": "Dense", "hybrid": "Hybrid", "rerank": "Hybrid+rerank"}
 DEFAULT_KS = (5, 10, 20)
 # MRR is cut at 10 so numbers stay comparable with the original baseline.
 MRR_CUTOFF = 10
@@ -99,8 +99,11 @@ def run_evaluation(
     searchers: dict[str, Callable[[str], list[str]]] = {
         "bm25": lambda q: [cid for cid, _ in retriever.search_bm25(q, depth)],
         "dense": lambda q: [cid for cid, _ in retriever.search_dense(q, depth)],
-        "hybrid": lambda q: [r["chunk_id"] for r in retriever.retrieve(q, top_k=depth)],
+        "hybrid": lambda q: [cid for cid, _ in retriever.search_hybrid(q, depth)],
+        "rerank": lambda q: [cid for cid, _ in retriever.search(q, depth)],
     }
+    if retriever.reranker is None:
+        modes = [m for m in modes if m != "rerank"]
 
     results = {}
     for mode in modes:

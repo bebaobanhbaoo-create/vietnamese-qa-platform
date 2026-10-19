@@ -18,7 +18,7 @@ jobs:
       - run: pip install --no-deps -e .
       - run: >
           pip install "pydantic==2.13.4" "pydantic-settings==2.15.0" "pytest==9.1.1" "ruff==0.14.3"
-          "numpy==2.3.5" "rank-bm25==0.2.2" "pyvi==0.1.1" "faiss-cpu==1.10.0"
+          "numpy==2.3.5" "rank-bm25==0.2.2" "pyvi==0.1.1" "faiss-cpu==1.10.0" "qdrant-client==1.19.1"
       - run: ruff check .
       - run: ruff format --check .
       - run: pytest -q

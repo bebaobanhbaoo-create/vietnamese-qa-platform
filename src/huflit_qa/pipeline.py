@@ -39,7 +39,6 @@ def build_index(settings: Settings, encoder: "Encoder | None" = None) -> None:
     """
     # Imported here so `process` does not pay for loading torch/faiss.
     from huflit_qa.indexing.bm25 import build_bm25, save_bm25
-    from huflit_qa.indexing.dense import build_dense, save_dense
     from huflit_qa.indexing.encoders import Encoder
     from huflit_qa.indexing.manifest import build_manifest, save_manifest
     from huflit_qa.indexing.tokenize import get_tokenizer
@@ -58,9 +57,18 @@ def build_index(settings: Settings, encoder: "Encoder | None" = None) -> None:
     emb = settings.embedding
     if encoder is None:
         encoder = Encoder(emb.model, emb.max_seq_length, emb.batch_size)
-    logger.info("Encoding %d chunks with %s", len(chunks), emb.model)
-    vectors = encoder.encode_passages(texts)
-    save_dense(build_dense(vectors), chunk_ids, settings.faiss_path, settings.faiss_ids_path)
-    logger.info("FAISS -> %s", settings.faiss_path)
+    if settings.index.vector_store == "qdrant":
+        from huflit_qa.indexing.stores import QdrantStore
+
+        QdrantStore(settings.qdrant_path).sync(chunks, texts, encoder)
+        logger.info("Qdrant -> %s", settings.qdrant_path)
+    else:
+        from huflit_qa.indexing.stores import FaissStore
+
+        logger.info("Encoding %d chunks with %s", len(chunks), emb.model)
+        FaissStore.build(
+            encoder.encode_passages(texts), chunk_ids, settings.faiss_path, settings.faiss_ids_path
+        )
+        logger.info("FAISS -> %s", settings.faiss_path)
 
     save_manifest(build_manifest(settings, len(chunks), encoder.dim), settings.manifest_path)
