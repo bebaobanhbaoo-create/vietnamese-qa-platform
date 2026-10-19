@@ -19,6 +19,7 @@ from huflit_qa.indexing.encoders import Encoder
 from huflit_qa.log import setup_logging
 from huflit_qa.pipeline import build_index
 from huflit_qa.retrieval.hybrid import HybridRetriever
+from huflit_qa.retrieval.reranker import CrossEncoderReranker
 
 MINILM = "paraphrase-multilingual-MiniLM-L12-v2"
 E5 = "intfloat/multilingual-e5-base"
@@ -69,21 +70,21 @@ def summarize(reports: dict, baseline: str = "baseline") -> str:
 
     base = reports.get(baseline, {}).get("results", {}).get("Hybrid", {}).get("per_query_nDCG@10")
     lines = [
-        "| Config | BM25 | Dense | Hybrid | Δ Hybrid vs baseline [95% CI] | R@20 | words/chunk |",
-        "|---|---|---|---|---|---|---|",
+        "| Config | BM25 | Dense | Hybrid | +rerank | Δ best vs baseline [95% CI] | R@20 | words/chunk |",
+        "|---|---|---|---|---|---|---|---|",
     ]
     for name, report in reports.items():
         r = report["results"]
+        best = r.get("Hybrid+rerank") or r["Hybrid"]
         delta = ""
         if base and name != baseline:
             qids = list(base)
-            cmp = paired_bootstrap(
-                [base[q] for q in qids], [r["Hybrid"]["per_query_nDCG@10"][q] for q in qids]
-            )
+            cmp = paired_bootstrap([base[q] for q in qids], [best["per_query_nDCG@10"][q] for q in qids])
             delta = f"{cmp['diff']:+.3f} [{cmp['ci_low']:+.3f}, {cmp['ci_high']:+.3f}]"
+        reranked = f"{r['Hybrid+rerank']['nDCG@10']:.3f}" if "Hybrid+rerank" in r else ""
         lines.append(
             f"| {name} | {r['BM25']['nDCG@10']:.3f} | {r['Dense']['nDCG@10']:.3f} | "
-            f"{r['Hybrid']['nDCG@10']:.3f} | {delta} | {r['Hybrid']['R@20']:.3f} | "
+            f"{r['Hybrid']['nDCG@10']:.3f} | {reranked} | {delta} | {r['Hybrid']['R@20']:.3f} | "
             f"{r['Hybrid']['words_per_chunk@10']:.0f} |"
         )
     return "\n".join(lines)
@@ -95,6 +96,7 @@ def main() -> None:
     parser.add_argument("--split", default="dev")
     parser.add_argument("--rebuild", action="store_true", help="Rebuild indexes that already exist")
     parser.add_argument("--summary", type=Path, help="Only print the summary of a saved results file")
+    parser.add_argument("--rerank", help="Cross-encoder to rerank hybrid results with (adds '+<name>' rows)")
     args = parser.parse_args()
     setup_logging()
     if args.summary:
@@ -102,6 +104,8 @@ def main() -> None:
         return
 
     names = args.only or list(GRID)
+    reranker = CrossEncoderReranker(args.rerank) if args.rerank else None
+    suffix = f"+{args.rerank.split('/')[-1]}" if args.rerank else ""
     encoders: dict[str, Encoder] = {}
     reports = {}
     # Group by model so each encoder is loaded once.
@@ -116,12 +120,12 @@ def main() -> None:
             build_index(settings, encoder)
         report = run_evaluation(
             settings,
-            ("bm25", "dense", "hybrid"),
+            ("bm25", "dense", "hybrid", "rerank"),
             split=args.split,
-            retriever=HybridRetriever(settings, encoder),
+            retriever=HybridRetriever(settings, encoder, reranker),
         )
-        reports[name] = report
-        print(f"\n## {name}\n\n{format_report(report)}\n", flush=True)
+        reports[name + suffix] = report
+        print(f"\n## {name + suffix}\n\n{format_report(report)}\n", flush=True)
 
     out = Path("eval/results") / f"{date.today()}_2b_{args.split}.json"
     previous = json.loads(out.read_text(encoding="utf-8")) if out.exists() else {}

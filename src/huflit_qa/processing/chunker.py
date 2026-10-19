@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 from huflit_qa.config import ChunkingSettings
+from huflit_qa.processing.metadata import mark_newest_in_group, record_metadata
 
 RE_DIEU = re.compile(r"^Điều\s+\d+", re.MULTILINE)
 RE_KHOAN = re.compile(r"(?m)^\s*\d+\.\s")
@@ -76,6 +77,7 @@ def _make_chunk(record, chunk_id, text, chunk_title, position):
         "doc_type": DOC_TYPE_MAP.get(record["doc_type"], record["doc_type"]),
         "source_url": record["doc_url"],
         "date_posted": record.get("date_posted"),
+        **record_metadata(record),
         "position": position,
         "text": text,
     }
@@ -176,6 +178,7 @@ def chunk_all(quy_che_path: Path, thong_bao_path: Path, cfg: ChunkingSettings) -
             continue
         chunks.extend(thong_bao_fn(rec, cfg))
 
+    mark_newest_in_group(chunks)
     return chunks
 
 

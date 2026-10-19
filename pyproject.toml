@@ -21,6 +21,7 @@ dependencies = [
     "rank-bm25==0.2.2",
     "pyvi==0.1.1",
     "faiss-cpu==1.10.0",
+    "qdrant-client==1.19.1",
     "torch==2.5.1",
     "sentence-transformers==3.4.1",
     "transformers==4.57.6",

@@ -25,6 +25,8 @@ def flatten_record(doc):
         "doc_url": doc["url"],
         "date_posted": doc.get("date_posted"),
         "doc_type": doc["doc_type"],
+        "category_name": doc.get("category_name"),
+        "issuer_unit": doc.get("issuer_unit"),
         "content_source": "web",
         "content_status": status,
         "content": content,

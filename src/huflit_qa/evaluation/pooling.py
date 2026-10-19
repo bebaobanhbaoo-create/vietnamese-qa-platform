@@ -31,7 +31,7 @@ def unit_rankings(
         text = q["query"]
         out["bm25"][text] = [cid for cid, _ in retriever.search_bm25(text, depth)]
         out["dense"][text] = [cid for cid, _ in retriever.search_dense(text, depth)]
-        out["hybrid"][text] = [r["chunk_id"] for r in retriever.retrieve(text, top_k=depth)]
+        out["hybrid"][text] = [cid for cid, _ in retriever.search_hybrid(text, depth)]
     return {
         mode: {text: project_ranking(ids, projection) for text, ids in by_query.items()}
         for mode, by_query in out.items()
