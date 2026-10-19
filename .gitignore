@@ -7,3 +7,6 @@ generate_commits*.sh
 .venv/
 .pytest_cache/
 .cache/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/

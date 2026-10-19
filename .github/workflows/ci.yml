@@ -5,13 +5,18 @@ on:
   pull_request:
 
 jobs:
-  test:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      # Unit tests only cover pure-Python modules for now; the full ML stack is installed in phase 5.
-      - run: pip install pytest==9.1.1
+          cache: pip
+      # Unit tests only touch pure-Python modules, so skip the torch/faiss stack for now;
+      # the full install is exercised in phase 5.
+      - run: pip install --no-deps -e .
+      - run: pip install "pydantic==2.13.4" "pydantic-settings==2.15.0" "pytest==9.1.1" "ruff==0.14.3"
+      - run: ruff check .
+      - run: ruff format --check .
       - run: pytest -q

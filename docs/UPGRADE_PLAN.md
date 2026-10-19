@@ -4,6 +4,18 @@
 > Nguyên tắc: không code giả, không số liệu bịa — mọi con số trong README/CV phải đo được bằng script trong repo.
 > Đơn vị thời gian: 1 ngày ≈ 6 giờ làm việc.
 
+## Tiến độ
+
+| Giai đoạn | Trạng thái |
+|---|---|
+| 0 — Dọn dẹp & baseline | ✅ Xong (PR #1) |
+| 1 — Chuẩn hoá cấu trúc | ✅ Xong (nhánh `refactor/package-structure`) |
+| 2 — Retrieval | ⏳ Tiếp theo |
+
+**Phát hiện thêm trong GĐ1 (chưa sửa, để không đổi dữ liệu):**
+- `ingest/parser.py::_is_boilerplate`: danh sách prefix có `"/"` nên mọi link nội bộ portal (kể cả `/news/detail/...`) đều bị coi là boilerplate → link sang bài viết khác không được ghi nhận là attachment.
+- Bước tải file đính kèm về `data/attachments/` không có trong repo (crawler chỉ lưu URL); `.txt` hiện có một phần được sửa tay (`huflit-qa sync`).
+
 ---
 
 ## 0. Hiện trạng (đo ngày 2026-10-19)
@@ -39,7 +51,8 @@
 
 ## Quy trình làm việc
 
-- Mỗi giai đoạn = 1 nhánh `phase-N/<tên>` + 1 PR vào `main`, merge sau khi bạn duyệt.
+- Mỗi nhóm việc = 1 nhánh đặt theo chức năng + 1 PR vào `main`, merge sau khi bạn duyệt:
+  `feat/<tên>`, `fix/<tên>`, `hotfix/<tên>`, `refactor/<tên>`, `docs/<tên>`, `test/<tên>`, `ci/<tên>` (chữ thường, nối bằng `-`).
 - Conventional commits có nội dung cụ thể (`fix(index): ...`, `feat(retrieval): ...`).
 - Tác giả commit: `Mai Dong Anh <bebaobanhbaoo@gmail.com>`.
 - Mỗi thay đổi ảnh hưởng chất lượng → chạy eval, lưu kết quả vào `eval/results/<ngày>_<tên>.json`.
@@ -48,7 +61,7 @@
 
 ## Giai đoạn 0 — Dọn dẹp & baseline · 1 ngày
 
-Nhánh: `phase-0/cleanup`
+Nhánh: `phase-0/cleanup` (đặt trước khi có quy ước)
 
 | ID | Việc | File | Ước lượng |
 |---|---|---|---|
@@ -66,7 +79,7 @@ Nhánh: `phase-0/cleanup`
 
 ## Giai đoạn 1 — Chuẩn hoá cấu trúc · 1,5 ngày
 
-Nhánh: `phase-1/package`
+Nhánh: `refactor/package-structure`
 
 ```
 src/huflit_qa/
@@ -98,7 +111,7 @@ pyproject.toml  Makefile  .pre-commit-config.yaml  .env.example
 
 ## Giai đoạn 2 — Chất lượng retrieval · 5–6 ngày *(trọng tâm CV)*
 
-Nhánh: `phase-2a/eval`, `phase-2b/chunk-embed`, `phase-2c/rerank-qdrant` (3 PR)
+Nhánh: `feat/eval-metrics-testset`, `feat/chunking-embeddings`, `feat/reranker-qdrant` (3 PR)
 
 ### 2A. Nâng cấp bộ đánh giá · 1,5 ngày
 | ID | Việc | File |
@@ -146,7 +159,7 @@ Nhánh: `phase-2a/eval`, `phase-2b/chunk-embed`, `phase-2c/rerank-qdrant` (3 PR)
 
 ## Giai đoạn 3 — Sinh câu trả lời (RAG) · 3–4 ngày
 
-Nhánh: `phase-3/generation`
+Nhánh: `feat/rag-generation`
 
 | ID | Việc | File | Ước lượng |
 |---|---|---|---|
@@ -163,7 +176,7 @@ Nhánh: `phase-3/generation`
 
 ## Giai đoạn 4 — API & demo · 2–3 ngày
 
-Nhánh: `phase-4/serving`
+Nhánh: `feat/api-demo`
 
 | ID | Việc | File |
 |---|---|---|
@@ -178,7 +191,7 @@ Nhánh: `phase-4/serving`
 
 ## Giai đoạn 5 — Test & CI/CD · 2 ngày
 
-Nhánh: `phase-5/ci`
+Nhánh: `ci/tests-docker`
 
 | ID | Việc | File |
 |---|---|---|
@@ -196,7 +209,7 @@ Nhánh: `phase-5/ci`
 
 ## Giai đoạn 6 — Dữ liệu, deploy, tài liệu · 2 ngày
 
-Nhánh: `phase-6/release`
+Nhánh: `docs/release-v2`
 
 | ID | Việc |
 |---|---|

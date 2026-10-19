@@ -1,11 +1,11 @@
 # Retrieval baseline
 
-Measured on 2026-10-19 with `python online/run_evaluate.py --mode all --output eval/results/baseline.json`.
+Measured on 2026-10-19 with `python online/run_evaluate.py --mode all --output eval/results/baseline.json` (now `huflit-qa eval --output eval/results/baseline.json`).
 
 | Setting | Value |
 |---|---|
 | Corpus | 1,209 chunks (715 regulations, 494 announcements) from 516 documents |
-| Test set | 50 queries, 129 labelled relevant chunks (`online/evaluation/test_queries.json`) |
+| Test set | 50 queries, 129 labelled relevant chunks (`eval/test_queries.json`) |
 | Embedding model | `paraphrase-multilingual-MiniLM-L12-v2` (384-d) |
 | Dense index | FAISS `IndexFlatIP` on L2-normalised vectors |
 | BM25 | `rank_bm25.BM25Okapi`, lowercase + whitespace tokenisation |
