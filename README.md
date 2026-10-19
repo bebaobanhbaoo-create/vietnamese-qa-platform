@@ -18,7 +18,7 @@ portal.huflit.edu.vn ──► scrape ──► process ──► chunk ──�
 | 2. Flatten into records (one per web page or attachment) | `huflit-qa process` | `data/processed/by_doc_type/*_flat.json` |
 | 3. Chunk by article/clause, build BM25 and FAISS indexes | `huflit-qa index` | `data/processed/chunks.json`, `data/index/` |
 | 4. Query | `huflit-qa query "..."` | ranked chunks |
-| 5. Evaluate | `huflit-qa eval` | P@k, R@k, MRR |
+| 5. Evaluate | `huflit-qa eval` | nDCG, Recall, Hit, MRR, latency |
 
 Code lives in `src/huflit_qa/`:
 
@@ -38,13 +38,15 @@ cli.py        `huflit-qa` command
 
 ## Results
 
-50 hand-labelled queries, k = 10 ([details](eval/BASELINE.md)):
+50 hand-labelled queries, k = 10 ([details](eval/BASELINE.md), [methodology](docs/EVALUATION.md)):
 
-| Retriever | P@10 | R@10 | MRR |
-|---|---|---|---|
-| BM25 | 0.152 | 0.640 | 0.499 |
-| Dense (multilingual MiniLM) | 0.146 | 0.608 | 0.525 |
-| **Hybrid (RRF)** | **0.182** | **0.723** | **0.630** |
+| Retriever | nDCG@10 | R@10 | Hit@10 | MRR@10 |
+|---|---|---|---|---|
+| BM25 | 0.485 | 0.640 | 0.800 | 0.499 |
+| Dense (multilingual MiniLM) | 0.490 | 0.608 | 0.780 | 0.525 |
+| **Hybrid (RRF)** | **0.621** | **0.723** | **0.840** | **0.630** |
+
+The test set is being expanded to ~160 queries with pooled relevance judgements and a dev/test split.
 
 ## Quickstart
 
