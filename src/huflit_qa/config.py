@@ -36,6 +36,12 @@ class Bm25Settings(BaseModel):
     tokenizer: Literal["whitespace", "words", "pyvi"] = "whitespace"
 
 
+class IndexSettings(BaseModel):
+    # faiss: exact search, rebuilt from scratch. qdrant: embedded Qdrant with payload filters and
+    # incremental updates (only new or changed chunks are re-embedded).
+    vector_store: Literal["faiss", "qdrant"] = "faiss"
+
+
 class EmbeddingSettings(BaseModel):
     model: str = "paraphrase-multilingual-MiniLM-L12-v2"
     # Truncation length; capped by the model's own limit.
@@ -46,10 +52,22 @@ class EmbeddingSettings(BaseModel):
 
 
 class RetrievalSettings(BaseModel):
+    """Query-time settings (not part of the index)."""
+
     top_k_bm25: int = 20
     top_k_dense: int = 20
     top_k: int = 10
     rrf_k: int = 60
+    bm25_weight: float = 1.0
+    dense_weight: float = 1.0
+
+
+class RerankSettings(BaseModel):
+    # None disables reranking.
+    model: str | None = None
+    # Number of fused candidates the cross-encoder rescores.
+    depth: int = 20
+    batch_size: int = 16
 
 
 class Settings(BaseSettings):
@@ -67,7 +85,9 @@ class Settings(BaseSettings):
     chunking: ChunkingSettings = ChunkingSettings()
     bm25: Bm25Settings = Bm25Settings()
     embedding: EmbeddingSettings = EmbeddingSettings()
+    index: IndexSettings = IndexSettings()
     retrieval: RetrievalSettings = RetrievalSettings()
+    rerank: RerankSettings = RerankSettings()
 
     @property
     def data_dir(self) -> Path:
@@ -128,6 +148,10 @@ class Settings(BaseSettings):
     @property
     def faiss_path(self) -> Path:
         return self.index_dir / "faiss.bin"
+
+    @property
+    def qdrant_path(self) -> Path:
+        return self.index_dir / "qdrant"
 
     @property
     def faiss_ids_path(self) -> Path:
