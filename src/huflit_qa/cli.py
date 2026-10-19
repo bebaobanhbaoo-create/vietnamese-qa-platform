@@ -102,22 +102,86 @@ def query(
 @app.command("eval")
 def evaluate(
     mode: Annotated[str, typer.Option(help="bm25 | dense | hybrid | all")] = "all",
-    k: Annotated[int | None, typer.Option("-k")] = None,
+    split: Annotated[str, typer.Option(help="dev (for tuning) | test (for reporting) | all")] = "all",
     output: Annotated[Path | None, typer.Option(help="Save the report as JSON")] = None,
 ) -> None:
-    """Step 5: evaluate retrieval on eval/test_queries.json."""
+    """Step 5: evaluate retrieval on eval/testset.jsonl."""
     from huflit_qa.evaluation.retrieval_eval import MODES, format_report, run_evaluation
 
     if mode != "all" and mode not in MODES:
         raise typer.BadParameter(f"mode must be one of {(*MODES, 'all')}")
+    if split not in ("dev", "test", "all"):
+        raise typer.BadParameter("split must be dev, test or all")
     modes = MODES if mode == "all" else (mode,)
 
-    report = run_evaluation(get_settings(), modes, k)
+    report = run_evaluation(get_settings(), modes, split=None if split == "all" else split)
     typer.echo(format_report(report))
     if output:
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
         typer.echo(f"\nSaved -> {output}")
+
+
+@app.command()
+def pool(
+    output: Annotated[Path, typer.Option(help="Pool file for the annotation page")] = Path(
+        "eval/annotation/pool.json"
+    ),
+    depth: Annotated[int, typer.Option(help="Top-N taken from each retriever")] = 10,
+    only_unlabelled: Annotated[bool, typer.Option(help="Skip queries already labelled")] = False,
+    indexes: Annotated[
+        list[Path] | None,
+        typer.Option("--index", help="Index directories to pool from (repeatable; default: data/index)"),
+    ] = None,
+) -> None:
+    """Pool label units retrieved by BM25, dense and hybrid search of one or more indexes."""
+    from huflit_qa.evaluation.pooling import build_pool, precomputed_searcher, save_pool, unit_rankings
+    from huflit_qa.evaluation.projection import load_units
+    from huflit_qa.evaluation.testset import load_testset
+    from huflit_qa.retrieval.hybrid import HybridRetriever
+
+    settings = get_settings()
+    queries = load_testset(settings.testset_path)
+    if only_unlabelled:
+        queries = [q for q in queries if not q.get("labelled")]
+    units = load_units(settings.label_units_path)
+
+    # Run every index over all queries first, one model in memory at a time.
+    rankings: dict[str, dict[str, list[str]]] = {}
+    for index_dir in indexes or [settings.index_dir]:
+        retriever = HybridRetriever(settings.model_copy(update={"index_path": index_dir}))
+        for mode, by_query in unit_rankings(retriever, queries, units, depth).items():
+            rankings[f"{index_dir.name}/{mode}"] = by_query
+        del retriever
+
+    searchers = {name: precomputed_searcher(by_query) for name, by_query in rankings.items()}
+    unit_map = {u["unit_id"]: u for u in units}
+    result = build_pool(queries, searchers, unit_map, depth)
+    save_pool(result, output)
+    sizes = [len(p["candidates"]) for p in result]
+    logger.info(
+        "%d queries, %d candidates (avg %.1f) -> %s",
+        len(result),
+        sum(sizes),
+        sum(sizes) / max(len(sizes), 1),
+        output,
+    )
+
+
+@app.command("merge-labels")
+def merge_labels(
+    labels_file: Annotated[Path, typer.Argument(help="labels.json exported by the annotation page")],
+) -> None:
+    """Write labels exported from eval/annotation/annotate.html into eval/testset.jsonl."""
+    from huflit_qa.evaluation.pooling import merge_labels as merge
+    from huflit_qa.evaluation.testset import load_testset, save_testset
+
+    settings = get_settings()
+    queries = load_testset(settings.testset_path)
+    labels = json.loads(labels_file.read_text(encoding="utf-8"))
+    updated = merge(queries, labels)
+    save_testset(queries, settings.testset_path)
+    logger.info("Updated %d queries in %s", updated, settings.testset_path)
 
 
 if __name__ == "__main__":

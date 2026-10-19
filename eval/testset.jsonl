@@ -1,0 +1,159 @@
+{"id": "q001", "query": "điều kiện xét tốt nghiệp", "relevant_chunk_ids": ["3208_2_d97", "3208_4_d52", "3208_3_d59"], "labelled": true, "split": "test", "style": "keyword", "source": "v1"}
+{"id": "q002", "query": "lịch nộp học phí", "relevant_chunk_ids": ["3352_p0", "3618_p0", "3748_p0", "3203_p0", "3363_p0"], "labelled": true, "split": "test", "style": "keyword", "source": "v1"}
+{"id": "q003", "query": "quy định điểm số xét học bổng", "relevant_chunk_ids": ["3271_p0", "3476_d31", "3167_p0", "3476_d5", "3476_d9"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q004", "query": "thủ tục đăng ký môn học", "relevant_chunk_ids": ["3317_p0", "3289_p0", "3244_p0", "3453_p0"], "labelled": true, "split": "test", "style": "keyword", "source": "v1"}
+{"id": "q005", "query": "lịch thi học kỳ", "relevant_chunk_ids": ["3263_p0", "3146_p0"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q006", "query": "quy định về học bổng khuyến khích học tập", "relevant_chunk_ids": ["3278_d80", "3476_d1", "3278_d84"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q007", "query": "thông báo nghỉ tết nguyên đán", "relevant_chunk_ids": ["3486_p0", "3740_p0"], "labelled": true, "split": "test", "style": "keyword", "source": "v1"}
+{"id": "q008", "query": "điểm rèn luyện sinh viên", "relevant_chunk_ids": ["3438_p0", "3678_2_d7", "3678_1_d11"], "labelled": true, "split": "test", "style": "keyword", "source": "v1"}
+{"id": "q009", "query": "đăng ký học lại học phần", "relevant_chunk_ids": ["3208_2_d46", "3208_2_d94", "3208_3_d32"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q010", "query": "thời gian đăng ký học phần học kỳ", "relevant_chunk_ids": ["3244_p0", "3453_p0", "3583_p0", "3208_2_d39"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q011", "query": "quy chế thi cử và kiểm tra", "relevant_chunk_ids": ["3208_1_d24", "3208_3_d41", "3208_3_d87"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q012", "query": "xử lý sinh viên vi phạm quy định", "relevant_chunk_ids": ["3208_3_d87", "3278_d31", "3278_d91", "3208_4_d72"], "labelled": true, "split": "test", "style": "keyword", "source": "v1"}
+{"id": "q013", "query": "lịch học kỳ 1 năm học mới", "relevant_chunk_ids": ["3425_p0", "3432_p0", "3555_p0", "3769_p0"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q014", "query": "mức học phí theo tín chỉ", "relevant_chunk_ids": ["3545_p0", "3677_p0", "3574_p0"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q015", "query": "xét học bổng tân sinh viên", "relevant_chunk_ids": ["3476_d31", "3476_d29", "3680_p0", "3278_d80"], "labelled": true, "split": "test", "style": "keyword", "source": "v1"}
+{"id": "q016", "query": "hạng tốt nghiệp xuất sắc điểm trung bình tích lũy từ 3.60", "relevant_chunk_ids": ["3208_4_d54", "3208_3_d47"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q017", "query": "nội quy phòng thi sinh viên đến chậm quá 10 phút không được vào", "relevant_chunk_ids": ["3561_1_d1"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q018", "query": "sinh viên đóng học phí muộn bị đình chỉ thi hủy điểm học phần", "relevant_chunk_ids": ["3208_4_d74"], "labelled": true, "split": "test", "style": "keyword", "source": "v1"}
+{"id": "q019", "query": "cảnh báo học tập tín chỉ không đạt vượt quá 50 phần trăm khối lượng đăng ký", "relevant_chunk_ids": ["3208_4_d44", "3208_3_d49"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q020", "query": "buộc thôi học số lần cảnh báo học tập vượt quá giới hạn", "relevant_chunk_ids": ["3208_4_d46", "3208_3_d50"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q021", "query": "chuẩn đầu ra tin học chứng chỉ MOS Word Excel", "relevant_chunk_ids": ["3209_2_d2"], "labelled": true, "split": "test", "style": "keyword", "source": "v1"}
+{"id": "q022", "query": "xử lý vi phạm nội quy phòng thi khiển trách cảnh cáo đình chỉ", "relevant_chunk_ids": ["3561_1_d3", "3678_1_d2"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q023", "query": "thủ tục xin chuyển ngành làm đơn nộp phòng đào tạo đại học", "relevant_chunk_ids": ["3208_4_d61", "3208_4_d63"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q024", "query": "học bổng chính sách HUFLIT sinh viên khuyết tật mồ côi cha lẫn mẹ", "relevant_chunk_ids": ["3278_d85", "3476_d4", "3612_d3"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q025", "query": "điểm rèn luyện hoàn thành tuần sinh hoạt công dân cộng 10 điểm", "relevant_chunk_ids": ["3678_1_d4"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q026", "query": "sinh viên vắng mặt thi không có lý do chính đáng nhận điểm 0", "relevant_chunk_ids": ["3208_4_d33"], "labelled": true, "split": "test", "style": "keyword", "source": "v1"}
+{"id": "q027", "query": "điều kiện đăng ký học cùng lúc hai chương trình trình độ năm thứ hai", "relevant_chunk_ids": ["3208_3_d77", "3208_3_d78", "3208_4_d70"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q028", "query": "kết quả học tập được bảo lưu khi sinh viên bị buộc thôi học vì cảnh báo", "relevant_chunk_ids": ["3208_4_d48"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q029", "query": "học lại để cải thiện điểm các học phần bị điểm D", "relevant_chunk_ids": ["3208_4_d36", "3208_2_d48"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q030", "query": "điểm chữ A B C D F quy đổi thang điểm 4 tính điểm trung bình", "relevant_chunk_ids": ["3208_4_d35", "3208_4_d39", "3208_3_d44"], "labelled": true, "split": "dev", "style": "keyword", "source": "v1"}
+{"id": "q031", "query": "tôi muốn nghỉ học một học kỳ rồi quay lại học tiếp có được không", "relevant_chunk_ids": ["3208_4_d57", "3208_4_d58", "3208_4_d60"], "labelled": true, "split": "dev", "style": "question", "source": "v1"}
+{"id": "q032", "query": "học lực quá kém kéo dài thì nhà trường sẽ làm gì với sinh viên đó", "relevant_chunk_ids": ["3208_4_d44", "3208_4_d45", "3208_4_d46", "3208_3_d49", "3208_3_d50"], "labelled": true, "split": "test", "style": "question", "source": "v1"}
+{"id": "q033", "query": "muốn học thêm một ngành nữa bên cạnh ngành đang học có được không", "relevant_chunk_ids": ["3208_3_d77", "3208_3_d78", "3208_4_d70"], "labelled": true, "split": "dev", "style": "question", "source": "v1"}
+{"id": "q034", "query": "muốn chuyển sang học ở một trường đại học khác thì làm thế nào", "relevant_chunk_ids": ["3208_4_d64", "3208_4_d65"], "labelled": true, "split": "dev", "style": "question", "source": "v1"}
+{"id": "q035", "query": "thầy cô hướng dẫn làm luận văn cuối khóa cần có trình độ học vấn như thế nào", "relevant_chunk_ids": ["3344_1_d35"], "labelled": true, "split": "dev", "style": "question", "source": "v1"}
+{"id": "q036", "query": "nhà trường có hỗ trợ gì cho sinh viên không có tiền đóng học phí không", "relevant_chunk_ids": ["3612_d2", "3612_d3", "3612_d4", "3278_d55"], "labelled": true, "split": "test", "style": "question", "source": "v1"}
+{"id": "q037", "query": "mang điện thoại vào phòng thi thì có bị phạt gì không", "relevant_chunk_ids": ["3561_1_d3"], "labelled": true, "split": "test", "style": "question", "source": "v1"}
+{"id": "q038", "query": "học bao nhiêu tín chỉ tích lũy thì được coi là sinh viên năm 3", "relevant_chunk_ids": ["3208_3_d48"], "labelled": true, "split": "dev", "style": "question", "source": "v1"}
+{"id": "q039", "query": "điểm GPA tốt nghiệp bao nhiêu thì được xếp loại giỏi", "relevant_chunk_ids": ["3208_4_d54", "3208_3_d47"], "labelled": true, "split": "test", "style": "question", "source": "v1"}
+{"id": "q040", "query": "nếu trượt môn học tự chọn thì có bắt buộc phải học lại không", "relevant_chunk_ids": ["3208_4_d15", "3208_2_d47"], "labelled": true, "split": "test", "style": "question", "source": "v1"}
+{"id": "q041", "query": "sinh viên nộp bằng cấp giả để được vào học sẽ bị xử lý thế nào", "relevant_chunk_ids": ["3208_4_d73"], "labelled": true, "split": "test", "style": "question", "source": "v1"}
+{"id": "q042", "query": "sinh viên cần làm những gì để nhận được điểm rèn luyện cao", "relevant_chunk_ids": ["3678_1_d2", "3678_1_d3", "3678_1_d4", "3678_1_d5"], "labelled": true, "split": "test", "style": "question", "source": "v1"}
+{"id": "q043", "query": "ai được phép xin hoãn thời gian đóng tiền học", "relevant_chunk_ids": ["3806_p0"], "labelled": true, "split": "test", "style": "question", "source": "v1"}
+{"id": "q044", "query": "sinh viên có quyền và nghĩa vụ gì khi học tại trường", "relevant_chunk_ids": ["3278_d8", "3278_d9", "3278_d10", "3278_d11"], "labelled": true, "split": "dev", "style": "question", "source": "v1"}
+{"id": "q045", "query": "sinh viên cần đáp ứng điều kiện gì để được cấp bằng tốt nghiệp đại học", "relevant_chunk_ids": ["3208_4_d52", "3208_3_d59", "3208_2_d97"], "labelled": true, "split": "test", "style": "question", "source": "v1"}
+{"id": "q046", "query": "cách tính điểm trung bình học kỳ và điểm trung bình tích lũy", "relevant_chunk_ids": ["3208_4_d40", "3208_2_d95"], "labelled": true, "split": "test", "style": "question", "source": "v1"}
+{"id": "q047", "query": "giảng viên cố vấn học tập có nhiệm vụ và trách nhiệm gì với sinh viên", "relevant_chunk_ids": ["3273_1_d8", "3273_1_d10", "3273_1_d12"], "labelled": true, "split": "dev", "style": "question", "source": "v1"}
+{"id": "q048", "query": "khảo sát lấy ý kiến sinh viên về chất lượng giảng dạy của giảng viên", "relevant_chunk_ids": ["3814_p0", "3808_p0"], "labelled": true, "split": "dev", "style": "question", "source": "v1"}
+{"id": "q049", "query": "quy định về sử dụng quỹ hỗ trợ sinh viên hệ chính quy mượn tiền học phí", "relevant_chunk_ids": ["3612_d2", "3612_d3", "3612_d4"], "labelled": true, "split": "dev", "style": "question", "source": "v1"}
+{"id": "q050", "query": "hỗ trợ tài chính học bổng cho sinh viên xuất sắc và sinh viên có hoàn cảnh khó khăn", "relevant_chunk_ids": ["3278_d55", "3278_d80", "3278_d85"], "labelled": true, "split": "dev", "style": "question", "source": "v1"}
+{"id": "q051", "query": "thời gian tối đa để hoàn thành chương trình đào tạo đại học", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q052", "query": "mỗi học kỳ sinh viên được đăng ký tối đa bao nhiêu tín chỉ", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q053", "query": "khối lượng học tập tối thiểu phải đăng ký trong học kỳ chính", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q054", "query": "rút bớt học phần đã đăng ký", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q055", "query": "điểm học phần được tính từ điểm quá trình và điểm thi như thế nào", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q056", "query": "sinh viên vắng thi có lý do chính đáng thì có được thi bù không", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q057", "query": "phúc khảo bài thi kết thúc học phần", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q058", "query": "xếp hạng năm đào tạo theo số tín chỉ tích lũy", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q059", "query": "học vượt để tốt nghiệp sớm hơn thời gian thiết kế", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q060", "query": "nghỉ học tạm thời vì lý do sức khỏe cần những giấy tờ gì", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q061", "query": "thời gian bảo lưu kết quả học tập tối đa", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q062", "query": "công nhận và chuyển đổi tín chỉ đã học ở trường khác", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q063", "query": "khi nào xếp loại tốt nghiệp bị giảm một mức", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q064", "query": "miễn học giáo dục thể chất và giáo dục quốc phòng", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q065", "query": "học phần tiên quyết và học phần học trước", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q066", "query": "sinh viên đang bị kỷ luật có được xét tốt nghiệp không", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q067", "query": "thủ tục thôi học tự nguyện", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q068", "query": "điểm I và điểm X trong bảng điểm có nghĩa là gì", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q069", "query": "thời hạn cấp bằng tốt nghiệp sau khi có quyết định công nhận", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q070", "query": "tổ chức thi và đánh giá học phần theo hình thức trực tuyến", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q071", "query": "điểm trung bình học kỳ dưới bao nhiêu thì bị cảnh báo học tập", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q072", "query": "đang bị cảnh báo học tập thì được đăng ký tối đa bao nhiêu tín chỉ", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q073", "query": "sinh viên năm nhất bị cảnh báo học tập khi điểm trung bình dưới mức nào", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q074", "query": "quy trình chấm thi và công bố điểm học phần", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q075", "query": "học cải thiện điểm thì lấy điểm lần nào", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q076", "query": "những hành vi sinh viên không được làm", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q077", "query": "hình thức kỷ luật khiển trách áp dụng khi nào", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q078", "query": "thời hạn chấp hành kỷ luật và xóa kỷ luật", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q079", "query": "danh hiệu sinh viên xuất sắc toàn khóa", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q080", "query": "hội đồng khen thưởng và kỷ luật sinh viên gồm những ai", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q081", "query": "sinh viên ngoại trú có phải khai báo nơi cư trú không", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q082", "query": "sinh viên đánh nhau trong trường bị xử lý thế nào", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q083", "query": "uống rượu bia trong giờ học", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q084", "query": "nhà trường có tư vấn tâm lý cho sinh viên không", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q085", "query": "sinh viên bị kỷ luật có được nhận học bổng không", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q086", "query": "chế độ chính sách cho sinh viên thuộc diện khó khăn", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q087", "query": "khiếu nại về quyết định kỷ luật", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q088", "query": "mỗi cố vấn học tập phụ trách bao nhiêu sinh viên", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q089", "query": "cố vấn học tập họp lớp mấy lần mỗi học kỳ", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q090", "query": "tiêu chuẩn để giảng viên làm cố vấn học tập", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q091", "query": "cố vấn học tập tư vấn kế hoạch đăng ký môn học", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q092", "query": "quyền lợi và chế độ của giảng viên cố vấn học tập", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q093", "query": "điểm rèn luyện tối thiểu để được xét học bổng khuyến khích học tập", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q094", "query": "học bổng loại giỏi bằng bao nhiêu phần trăm học phí", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q095", "query": "học bổng được xét theo học kỳ hay theo năm học", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q096", "query": "phải đăng ký tối thiểu bao nhiêu tín chỉ mới được xét học bổng", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q097", "query": "có học phần bị điểm F trong học kỳ thì có được học bổng không", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q098", "query": "học bổng doanh nghiệp dành cho tân sinh viên", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q099", "query": "khi nào sinh viên bị thu hồi học bổng", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q100", "query": "học bổng tân sinh viên xét theo điểm thi tốt nghiệp THPT", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q101", "query": "chuẩn đầu ra tiếng Anh khóa 2024 yêu cầu chứng chỉ gì", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q102", "query": "IELTS bao nhiêu điểm thì đạt chuẩn đầu ra ngoại ngữ", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q103", "query": "chứng chỉ TOEIC có được dùng để xét chuẩn đầu ra không", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q104", "query": "chuẩn đầu ra ngoại ngữ thứ hai cho sinh viên ngành ngôn ngữ Anh", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q105", "query": "chuẩn đầu ra tin học ứng dụng cơ bản", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q106", "query": "nộp chứng chỉ ngoại ngữ đầu ra ở đâu và hạn chót khi nào", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q107", "query": "kỳ kiểm tra năng lực ngoại ngữ đầu ra do trường tổ chức", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q108", "query": "chưa đạt chuẩn đầu ra ngoại ngữ thì có được tốt nghiệp không", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q109", "query": "mượn tiền quỹ hỗ trợ sinh viên tối đa bao nhiêu", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q110", "query": "thời hạn hoàn trả tiền mượn từ quỹ hỗ trợ", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q111", "query": "hồ sơ xin mượn tiền quỹ hỗ trợ sinh viên gồm những gì", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q112", "query": "tân sinh viên có được mượn tiền quỹ hỗ trợ không", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q113", "query": "khung đánh giá điểm rèn luyện gồm những tiêu chí nào", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q114", "query": "điểm rèn luyện bao nhiêu thì xếp loại xuất sắc", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q115", "query": "điểm rèn luyện dưới 50 thì bị ảnh hưởng gì", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q116", "query": "tham gia hoạt động tình nguyện được cộng bao nhiêu điểm rèn luyện", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q117", "query": "sinh viên tự đánh giá điểm rèn luyện trên portal như thế nào", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q118", "query": "điểm rèn luyện khi tham gia khảo sát của nhà trường", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q119", "query": "điều kiện để được làm khóa luận tốt nghiệp", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q120", "query": "khóa luận tốt nghiệp bao nhiêu tín chỉ", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q121", "query": "khóa luận tốt nghiệp trình bày tối thiểu bao nhiêu trang", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q122", "query": "hội đồng chấm khóa luận gồm mấy thành viên", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q123", "query": "khóa luận bị phát hiện đạo văn thì xử lý thế nào", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q124", "query": "không đủ điều kiện làm khóa luận thì học học phần gì thay thế", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q125", "query": "một giảng viên được hướng dẫn tối đa bao nhiêu sinh viên làm khóa luận", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q126", "query": "có được mang tài liệu vào phòng thi trắc nghiệm trên máy tính không", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q127", "query": "quên thẻ sinh viên có được vào phòng thi không", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q128", "query": "trang phục khi đi thi", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q129", "query": "máy tính bị lỗi khi đang làm bài thi trắc nghiệm thì làm sao", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q130", "query": "sau bao nhiêu phút làm bài thì được ra khỏi phòng thi", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q131", "query": "hạn chót đóng học phí học kỳ 2 năm học 2025-2026", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q132", "query": "xin gia hạn đóng học phí", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q133", "query": "lịch thi kết thúc học phần học kỳ 1 năm học 2025-2026", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q134", "query": "đăng ký môn học học kỳ 3 năm học 2024-2025", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q135", "query": "danh sách lớp học phần bị hủy", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q136", "query": "bảo hiểm y tế sinh viên năm học 2025-2026", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q137", "query": "đăng ký thay đổi nơi khám chữa bệnh bảo hiểm y tế", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q138", "query": "tuần sinh hoạt công dân cho tân sinh viên khóa 31", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q139", "query": "lễ tốt nghiệp đợt 1 năm 2026", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q140", "query": "cấp giấy xác nhận sinh viên", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q141", "query": "cảnh giác lừa đảo qua điện thoại mạo danh nhà trường", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q142", "query": "ứng dụng di động My HUFLIT", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q143", "query": "học tập tại cơ sở Hóc Môn", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q144", "query": "lấy ý kiến người học về hoạt động giảng dạy học kỳ 1 năm học 2025-2026", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q145", "query": "lịch học giáo dục quốc phòng và an ninh", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q146", "query": "cập nhật thông tin cá nhân trên cổng thông tin portal", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q147", "query": "đối thoại giữa lãnh đạo nhà trường với sinh viên", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q148", "query": "khảo sát sinh viên có gia đình bị ảnh hưởng bởi thiên tai bão lũ", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q149", "query": "trang đăng nhập portal giả mạo", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q150", "query": "đăng ký thủ tục trực tuyến theo nhu cầu sinh viên", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q151", "query": "kết quả xét tốt nghiệp đợt 3 năm 2025", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q152", "query": "giá phòng ký túc xá một tháng bao nhiêu", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "question", "source": "draft-v2"}
+{"id": "q153", "query": "thư viện mở cửa đến mấy giờ", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
+{"id": "q154", "query": "điều kiện tuyển sinh thạc sĩ", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q155", "query": "câu lạc bộ guitar của trường", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q156", "query": "mật khẩu wifi trong trường", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q157", "query": "chương trình trao đổi sinh viên đi Hàn Quốc", "relevant_chunk_ids": [], "labelled": false, "split": "test", "style": "keyword", "source": "draft-v2"}
+{"id": "q158", "query": "học phí năm 2027", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "keyword", "source": "draft-v2"}
+{"id": "q159", "query": "trường có bãi giữ xe máy miễn phí không", "relevant_chunk_ids": [], "labelled": false, "split": "dev", "style": "question", "source": "draft-v2"}
