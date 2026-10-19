@@ -11,6 +11,8 @@ class EncoderSpec:
     passage_prefix: str = ""
     # PhoBERT-based models are trained on pyvi-segmented text ("tốt_nghiệp").
     segment_words: bool = False
+    # Hub revision to load; None = main.
+    revision: str | None = None
 
 
 # Conventions from each model card. Unknown models get the defaults.
@@ -19,7 +21,9 @@ ENCODER_SPECS: dict[str, EncoderSpec] = {
     "intfloat/multilingual-e5-base": EncoderSpec(query_prefix="query: ", passage_prefix="passage: "),
     "intfloat/multilingual-e5-large": EncoderSpec(query_prefix="query: ", passage_prefix="passage: "),
     "bkai-foundation-models/vietnamese-bi-encoder": EncoderSpec(segment_words=True),
-    "BAAI/bge-m3": EncoderSpec(),
+    # main only ships pytorch_model.bin, which transformers refuses to torch.load with torch < 2.6
+    # (CVE-2025-32434); refs/pr/130 is the Hub's safetensors conversion of the same weights.
+    "BAAI/bge-m3": EncoderSpec(revision="refs/pr/130"),
 }
 
 
@@ -28,15 +32,18 @@ class Encoder:
         import torch
         from sentence_transformers import SentenceTransformer
 
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-        try:
-            # Load from the local HF cache first so repeated runs work offline.
-            self.model = SentenceTransformer(model_name, device=device, local_files_only=True)
-        except Exception:
-            self.model = SentenceTransformer(model_name, device=device)
-        self.model.max_seq_length = min(max_seq_length, self.model.max_seq_length or max_seq_length)
         self.model_name = model_name
         self.spec = ENCODER_SPECS.get(model_name, EncoderSpec())
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        revision = self.spec.revision
+        try:
+            # Load from the local HF cache first so repeated runs work offline.
+            self.model = SentenceTransformer(
+                model_name, device=device, revision=revision, local_files_only=True
+            )
+        except Exception:
+            self.model = SentenceTransformer(model_name, device=device, revision=revision)
+        self.model.max_seq_length = min(max_seq_length, self.model.max_seq_length or max_seq_length)
         self.batch_size = batch_size
 
     @property
