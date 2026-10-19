@@ -25,8 +25,8 @@ Code lives in `src/huflit_qa/`:
 ```
 ingest/       crawler, HTML parser, classification, attachment and PDF handling
 processing/   flat records, hand-corrected text sync, Điều/Khoản-aware chunkers (v1, v2)
-indexing/     BM25 (rank_bm25, optional pyvi word segmentation), dense encoders (sentence-transformers) and FAISS, index manifest
-retrieval/    hybrid retriever and Reciprocal Rank Fusion
+indexing/     BM25 (rank_bm25, optional pyvi word segmentation), dense encoders, FAISS or Qdrant (incremental), manifest
+retrieval/    hybrid retriever, weighted Reciprocal Rank Fusion, cross-encoder reranker, metadata filters
 evaluation/   P@k, R@k, MRR and the evaluation runner
 config.py     settings (pydantic-settings, overridable via HUFLIT_* env vars or .env)
 cli.py        `huflit-qa` command
@@ -56,6 +56,7 @@ python -m venv .venv
 pip install -e ".[dev]"
 
 huflit-qa query "điều kiện xét tốt nghiệp" -k 5
+huflit-qa query "chuẩn đầu ra ngoại ngữ" --doc-type quy_che --newest-only --rerank BAAI/bge-reranker-v2-m3
 huflit-qa eval
 ```
 
