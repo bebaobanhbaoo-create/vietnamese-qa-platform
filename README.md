@@ -8,17 +8,29 @@ Hybrid retrieval over the academic regulations and announcements published on th
 
 ```
 portal.huflit.edu.vn ──► scrape ──► process ──► chunk ──► BM25 + FAISS ──► RRF ──► top-k chunks
-   (HTML + PDF)        offline/     offline/    offline/   offline/          online/
-                       scraper      scripts     ir_build   ir_build          retrieval
+   (HTML + PDF)          ingest/    processing/  processing/  indexing/      retrieval/
 ```
 
-| Step | Script | Output |
+| Step | Command | Output |
 |---|---|---|
-| 1. Scrape announcements, regulations and attachments | `offline/run_scrape.py` | `data/raw/`, `data/attachments/` |
-| 2. Classify and flatten into records | `offline/run_process.py` | `data/processed/by_doc_type/*_flat.json` |
-| 3. Chunk by article/clause, build BM25 and FAISS indexes | `offline/run_index.py` | `data/processed/chunks.json`, `data/index/` |
-| 4. Query | `online/run_query.py` | ranked chunks |
-| 5. Evaluate | `online/run_evaluate.py` | P@k, R@k, MRR |
+| 1. Scrape announcements, regulations and attachment links | `huflit-qa scrape` | `data/raw/`, `data/processed/by_doc_type/` |
+| 1b. Normalise downloaded attachments, extract PDF text | `huflit-qa normalize-attachments`, `huflit-qa extract-pdf` | `data/attachments/**.txt` |
+| 2. Flatten into records (one per web page or attachment) | `huflit-qa process` | `data/processed/by_doc_type/*_flat.json` |
+| 3. Chunk by article/clause, build BM25 and FAISS indexes | `huflit-qa index` | `data/processed/chunks.json`, `data/index/` |
+| 4. Query | `huflit-qa query "..."` | ranked chunks |
+| 5. Evaluate | `huflit-qa eval` | P@k, R@k, MRR |
+
+Code lives in `src/huflit_qa/`:
+
+```
+ingest/       crawler, HTML parser, classification, attachment and PDF handling
+processing/   flat records, hand-corrected text sync, Điều/Khoản-aware chunker
+indexing/     BM25 (rank_bm25) and dense (sentence-transformers + FAISS) indexes
+retrieval/    hybrid retriever and Reciprocal Rank Fusion
+evaluation/   P@k, R@k, MRR and the evaluation runner
+config.py     settings (pydantic-settings, overridable via HUFLIT_* env vars or .env)
+cli.py        `huflit-qa` command
+```
 
 ## Data
 
@@ -39,18 +51,19 @@ portal.huflit.edu.vn ──► scrape ──► process ──► chunk ──�
 ```bash
 python -m venv .venv
 .venv/Scripts/activate        # Linux/macOS: source .venv/bin/activate
-pip install -r requirements.txt
+pip install -e ".[dev]"
 
-python online/run_query.py "điều kiện xét tốt nghiệp" --top-k 5
-python online/run_evaluate.py --mode all
+huflit-qa query "điều kiện xét tốt nghiệp" -k 5
+huflit-qa eval
 ```
 
-The repository ships with a prebuilt index; run `python offline/run_index.py` to rebuild it.
+The repository ships with a prebuilt index; run `huflit-qa index` to rebuild it. Settings are documented in [.env.example](.env.example).
 
-## Tests
+## Development
 
 ```bash
-pytest
+make check      # ruff lint + format check, mypy, pytest
+make format     # auto-fix lint and formatting
 ```
 
 ## License

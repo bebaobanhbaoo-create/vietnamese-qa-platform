@@ -4,6 +4,18 @@
 > Nguyên tắc: không code giả, không số liệu bịa — mọi con số trong README/CV phải đo được bằng script trong repo.
 > Đơn vị thời gian: 1 ngày ≈ 6 giờ làm việc.
 
+## Tiến độ
+
+| Giai đoạn | Trạng thái |
+|---|---|
+| 0 — Dọn dẹp & baseline | ✅ Xong (PR #1) |
+| 1 — Chuẩn hoá cấu trúc | ✅ Xong (nhánh `phase-1/package`) |
+| 2 — Retrieval | ⏳ Tiếp theo |
+
+**Phát hiện thêm trong GĐ1 (chưa sửa, để không đổi dữ liệu):**
+- `ingest/parser.py::_is_boilerplate`: danh sách prefix có `"/"` nên mọi link nội bộ portal (kể cả `/news/detail/...`) đều bị coi là boilerplate → link sang bài viết khác không được ghi nhận là attachment.
+- Bước tải file đính kèm về `data/attachments/` không có trong repo (crawler chỉ lưu URL); `.txt` hiện có một phần được sửa tay (`huflit-qa sync`).
+
 ---
 
 ## 0. Hiện trạng (đo ngày 2026-10-19)
