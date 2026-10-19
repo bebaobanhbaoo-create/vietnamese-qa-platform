@@ -13,10 +13,12 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-      # Unit tests only touch pure-Python modules, so skip the torch/faiss stack for now;
-      # the full install is exercised in phase 5.
+      # Unit tests need numpy, BM25, pyvi and FAISS but no model weights, so torch and
+      # sentence-transformers are skipped; the full install is exercised in phase 5.
       - run: pip install --no-deps -e .
-      - run: pip install "pydantic==2.13.4" "pydantic-settings==2.15.0" "pytest==9.1.1" "ruff==0.14.3"
+      - run: >
+          pip install "pydantic==2.13.4" "pydantic-settings==2.15.0" "pytest==9.1.1" "ruff==0.14.3"
+          "numpy==2.3.5" "rank-bm25==0.2.2" "pyvi==0.1.1" "faiss-cpu==1.10.0"
       - run: ruff check .
       - run: ruff format --check .
       - run: pytest -q
