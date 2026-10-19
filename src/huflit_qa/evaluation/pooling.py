@@ -8,8 +8,41 @@ page (eval/annotation/annotate.html) as JSON and are merged into the test set.
 import json
 from collections.abc import Callable
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+from huflit_qa.evaluation.projection import build_projection, project_ranking
+
+if TYPE_CHECKING:
+    from huflit_qa.retrieval.hybrid import HybridRetriever
 
 Searcher = Callable[[str, int], list[str]]
+
+
+def unit_rankings(
+    retriever: "HybridRetriever", queries: list[dict], units: list[dict], depth: int
+) -> dict[str, dict[str, list[str]]]:
+    """mode -> query text -> label units covered by the top-``depth`` chunks, in rank order.
+
+    Chunks are projected onto label units because units are what annotators judge.
+    """
+    projection = build_projection(list(retriever.chunk_map.values()), units)
+    out: dict[str, dict[str, list[str]]] = {"bm25": {}, "dense": {}, "hybrid": {}}
+    for q in queries:
+        text = q["query"]
+        out["bm25"][text] = [cid for cid, _ in retriever.search_bm25(text, depth)]
+        out["dense"][text] = [cid for cid, _ in retriever.search_dense(text, depth)]
+        out["hybrid"][text] = [r["chunk_id"] for r in retriever.retrieve(text, top_k=depth)]
+    return {
+        mode: {text: project_ranking(ids, projection) for text, ids in by_query.items()}
+        for mode, by_query in out.items()
+    }
+
+
+def precomputed_searcher(by_query: dict[str, list[str]]) -> Searcher:
+    def search(query: str, n: int) -> list[str]:
+        return by_query[query][:n]
+
+    return search
 
 
 def build_pool(

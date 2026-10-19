@@ -47,6 +47,7 @@
   .actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 40px; }
   .empty { color: var(--muted); padding: 40px; text-align: center; }
   .noanswer { color: var(--warn); font-weight: 600; }
+  .new { font-size: 11px; padding: 1px 6px; border-radius: 4px; background: var(--warn); color: #fff; }
 </style>
 </head>
 <body>
@@ -63,7 +64,7 @@
 <script>
 const STORE_KEY = "huflit-annotation-v1";
 let pool = [];          // [{id, query, candidates:[...]}]
-let state = {};         // id -> {relevant: [chunk_id], done: bool, noAnswer: bool}
+let state = {};         // id -> {relevant: [unit_id], done, noAnswer, seen: [unit_id], review}
 let current = 0, focus = 0;
 
 const $ = (id) => document.getElementById(id);
@@ -78,7 +79,7 @@ function save() {
 
 function stateFor(q) {
   if (!state[q.id]) {
-    state[q.id] = { relevant: q.candidates.filter((c) => c.labelled_relevant).map((c) => c.chunk_id), done: false, noAnswer: false };
+    state[q.id] = { relevant: q.candidates.filter((c) => c.labelled_relevant).map((c) => c.chunk_id), done: false, noAnswer: false, seen: [] };
   }
   return state[q.id];
 }
@@ -95,7 +96,7 @@ function highlight(text, query) {
 function renderList() {
   $("list").innerHTML = pool.map((q, i) => {
     const s = stateFor(q);
-    const st = s.done ? (s.noAnswer ? "∅" : `✓${s.relevant.length}`) : "";
+    const st = s.done ? (s.noAnswer ? "∅" : `✓${s.relevant.length}`) : (s.review ? "↻ xem lại" : "");
     return `<div data-i="${i}" class="${i === current ? "active" : ""}"><span class="st">${st}</span>${esc(q.id)} · ${esc(q.query)}</div>`;
   }).join("");
   const done = pool.filter((q) => stateFor(q).done).length;
@@ -109,9 +110,10 @@ function renderView() {
   const cands = q.candidates.map((c, i) => {
     const rel = s.relevant.includes(c.chunk_id);
     const ranks = Object.entries(c.ranks).map(([k, v]) => `${k}#${v}`).join(" · ") || "chỉ có trong nhãn cũ";
+    const isNew = s.review && !(s.seen || []).includes(c.chunk_id);
     return `<div class="cand ${rel ? "rel" : ""} ${i === focus ? "focus" : ""}" data-i="${i}">
       <div class="top"><input type="checkbox" ${rel ? "checked" : ""} tabindex="-1">
-        <span class="title">${esc(c.chunk_title || c.doc_title)}</span></div>
+        <span class="title">${esc(c.chunk_title || c.doc_title)}</span>${isNew ? ' <span class="new">mới</span>' : ""}</div>
       <div class="meta">${esc(c.doc_title)} · ${esc(c.date_posted || "")} · ${esc(c.chunk_id)} · ${esc(ranks)}</div>
       <pre>${highlight(c.text, q.query)}</pre></div>`;
   }).join("");
@@ -147,13 +149,15 @@ function toggle() {
 
 function markNoAnswer() {
   const s = stateFor(pool[current]);
-  s.relevant = []; s.noAnswer = true; s.done = true;
+  s.relevant = []; s.noAnswer = true; s.done = true; s.review = false;
+  s.seen = pool[current].candidates.map((c) => c.chunk_id);
   save(); go(current + 1);
 }
 
 function finish() {
   const s = stateFor(pool[current]);
-  s.done = true; s.noAnswer = s.relevant.length === 0;
+  s.done = true; s.noAnswer = s.relevant.length === 0; s.review = false;
+  s.seen = pool[current].candidates.map((c) => c.chunk_id);
   save(); go(current + 1);
 }
 
@@ -174,6 +178,14 @@ $("file").onchange = async (e) => {
   if (!f) return;
   pool = JSON.parse(await f.text());
   load();
+  // A newer pool can add candidates to queries already finished: reopen those for review.
+  for (const q of pool) {
+    const s = stateFor(q);
+    if (s.done && q.candidates.some((c) => !(s.seen || []).includes(c.chunk_id))) {
+      s.done = false; s.review = true;
+    }
+  }
+  save();
   const firstOpen = pool.findIndex((q) => !stateFor(q).done);
   go(firstOpen === -1 ? 0 : firstOpen);
 };

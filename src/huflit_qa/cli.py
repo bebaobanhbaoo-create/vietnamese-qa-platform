@@ -129,9 +129,14 @@ def pool(
     ),
     depth: Annotated[int, typer.Option(help="Top-N taken from each retriever")] = 10,
     only_unlabelled: Annotated[bool, typer.Option(help="Skip queries already labelled")] = False,
+    indexes: Annotated[
+        list[Path] | None,
+        typer.Option("--index", help="Index directories to pool from (repeatable; default: data/index)"),
+    ] = None,
 ) -> None:
-    """Pool candidate chunks from BM25, dense and hybrid search for relevance labelling."""
-    from huflit_qa.evaluation.pooling import build_pool, save_pool
+    """Pool label units retrieved by BM25, dense and hybrid search of one or more indexes."""
+    from huflit_qa.evaluation.pooling import build_pool, precomputed_searcher, save_pool, unit_rankings
+    from huflit_qa.evaluation.projection import load_units
     from huflit_qa.evaluation.testset import load_testset
     from huflit_qa.retrieval.hybrid import HybridRetriever
 
@@ -139,13 +144,19 @@ def pool(
     queries = load_testset(settings.testset_path)
     if only_unlabelled:
         queries = [q for q in queries if not q.get("labelled")]
-    retriever = HybridRetriever(settings)
-    searchers = {
-        "bm25": lambda q, n: [cid for cid, _ in retriever.search_bm25(q, n)],
-        "dense": lambda q, n: [cid for cid, _ in retriever.search_dense(q, n)],
-        "hybrid": lambda q, n: [r["chunk_id"] for r in retriever.retrieve(q, top_k=n)],
-    }
-    result = build_pool(queries, searchers, retriever.chunk_map, depth)
+    units = load_units(settings.label_units_path)
+
+    # Run every index over all queries first, one model in memory at a time.
+    rankings: dict[str, dict[str, list[str]]] = {}
+    for index_dir in indexes or [settings.index_dir]:
+        retriever = HybridRetriever(settings.model_copy(update={"index_path": index_dir}))
+        for mode, by_query in unit_rankings(retriever, queries, units, depth).items():
+            rankings[f"{index_dir.name}/{mode}"] = by_query
+        del retriever
+
+    searchers = {name: precomputed_searcher(by_query) for name, by_query in rankings.items()}
+    unit_map = {u["unit_id"]: u for u in units}
+    result = build_pool(queries, searchers, unit_map, depth)
     save_pool(result, output)
     sizes = [len(p["candidates"]) for p in result]
     logger.info(
