@@ -14,6 +14,7 @@ import re
 
 from huflit_qa.config import ChunkingSettings
 from huflit_qa.processing.chunker import DOC_TYPE_MAP
+from huflit_qa.processing.metadata import record_metadata
 
 RE_DIEU = re.compile(r"^Điều\s+\d+", re.MULTILINE)
 RE_CHUONG_LINE = re.compile(r"^\s*Chương\s+[IVXLC\d]+\b.*$", re.IGNORECASE)
@@ -104,6 +105,7 @@ def _make_chunk(record: dict, index: int, text: str, title: str | None, context:
         "doc_type": DOC_TYPE_MAP.get(record["doc_type"], record["doc_type"]),
         "source_url": record["doc_url"],
         "date_posted": record.get("date_posted"),
+        **record_metadata(record),
         "position": index,
         "context": context,
         "text": text,
