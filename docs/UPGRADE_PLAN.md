@@ -11,7 +11,7 @@
 | 0 — Dọn dẹp & baseline | ✅ Xong (PR #1) |
 | 1 — Chuẩn hoá cấu trúc | ✅ Xong (PR #2) |
 | 2A — Bộ đánh giá | 🔶 Công cụ xong (nhánh `feat/eval-metrics-testset`); **chờ gán nhãn 159 câu** |
-| 2B — Chunking + embedding | ⏳ Tiếp theo |
+| 2B — Chunking + embedding | 🔶 Đã chạy 14 cấu hình trên dev (nhánh `feat/chunking-embeddings`, xem `eval/EXPERIMENTS_2B.md`); **chọn cấu hình sau khi có nhãn mới** |
 
 **Phát hiện thêm trong GĐ1 (chưa sửa, để không đổi dữ liệu):**
 - `ingest/parser.py::_is_boilerplate`: danh sách prefix có `"/"` nên mọi link nội bộ portal (kể cả `/news/detail/...`) đều bị coi là boilerplate → link sang bài viết khác không được ghi nhận là attachment.
