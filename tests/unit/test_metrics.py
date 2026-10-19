@@ -1,6 +1,8 @@
+import math
+
 import pytest
 
-from huflit_qa.evaluation.metrics import mrr, precision_at_k, recall_at_k
+from huflit_qa.evaluation.metrics import hit_at_k, mrr, ndcg_at_k, precision_at_k, recall_at_k
 
 
 class TestRetrievalMetrics:
@@ -51,3 +53,19 @@ class TestRetrievalMetrics:
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
+
+
+class TestRankQualityMetrics:
+    def test_hit_at_k(self):
+        assert hit_at_k(["x", "y", "a"], {"a"}, 3) == 1.0
+        assert hit_at_k(["x", "y", "a"], {"a"}, 2) == 0.0
+
+    def test_ndcg_perfect_ranking_is_one(self):
+        assert ndcg_at_k(["a", "b", "x"], {"a", "b"}, 3) == 1.0
+
+    def test_ndcg_penalises_lower_rank(self):
+        # one relevant item at rank 2: (1/log2(3)) / (1/log2(2))
+        assert abs(ndcg_at_k(["x", "a"], {"a"}, 2) - 1 / math.log2(3)) < 1e-9
+
+    def test_ndcg_no_relevant(self):
+        assert ndcg_at_k(["a"], set(), 5) == 0.0

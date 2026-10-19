@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gán nhãn retrieval</title>
+<style>
+  :root {
+    --bg: #fafaf9; --panel: #ffffff; --text: #1c1917; --muted: #78716c; --border: #e7e5e4;
+    --accent: #2563eb; --ok: #16a34a; --ok-bg: #f0fdf4; --mark: #fef08a; --warn: #b45309;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1917; --panel: #292524; --text: #f5f5f4; --muted: #a8a29e; --border: #44403c;
+      --accent: #60a5fa; --ok: #4ade80; --ok-bg: #14532d55; --mark: #854d0e; --warn: #fbbf24;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 system-ui, sans-serif; background: var(--bg); color: var(--text); }
+  header { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 10px 16px;
+           border-bottom: 1px solid var(--border); background: var(--panel); position: sticky; top: 0; z-index: 2; }
+  header h1 { font-size: 16px; margin: 0 8px 0 0; }
+  button, label.btn { font: inherit; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;
+                      background: var(--panel); color: var(--text); cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  #progress { color: var(--muted); margin-left: auto; }
+  main { display: grid; grid-template-columns: 300px 1fr; height: calc(100vh - 53px); }
+  @media (max-width: 800px) { main { grid-template-columns: 1fr; height: auto; } nav { max-height: 30vh; } }
+  nav { overflow-y: auto; border-right: 1px solid var(--border); background: var(--panel); }
+  nav div { padding: 6px 12px; cursor: pointer; border-bottom: 1px solid var(--border); font-size: 13px; }
+  nav div.active { background: var(--accent); color: #fff; }
+  nav div .st { float: right; }
+  section { overflow-y: auto; padding: 16px; }
+  .query { font-size: 20px; font-weight: 600; margin: 0 0 4px; }
+  .hint { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+  .cand { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
+          margin-bottom: 10px; cursor: pointer; }
+  .cand.rel { border-color: var(--ok); background: var(--ok-bg); }
+  .cand.focus { outline: 2px solid var(--accent); }
+  .cand .top { display: flex; gap: 8px; align-items: baseline; }
+  .cand .title { font-weight: 600; }
+  .cand .meta { color: var(--muted); font-size: 12px; }
+  .cand pre { white-space: pre-wrap; font: 14px/1.5 system-ui, sans-serif; margin: 6px 0 0;
+              max-height: 220px; overflow: hidden; }
+  .cand.expanded pre { max-height: none; }
+  mark { background: var(--mark); color: inherit; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 40px; }
+  .empty { color: var(--muted); padding: 40px; text-align: center; }
+  .noanswer { color: var(--warn); font-weight: 600; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Gán nhãn retrieval</h1>
+  <label class="btn">Mở pool.json <input id="file" type="file" accept=".json" hidden></label>
+  <button id="export" class="primary">Xuất labels.json</button>
+  <span id="progress"></span>
+</header>
+<main>
+  <nav id="list"></nav>
+  <section id="view"><div class="empty">Mở file <code>eval/annotation/pool.json</code> (tạo bằng <code>huflit-qa pool</code>) để bắt đầu.</div></section>
+</main>
+<script>
+const STORE_KEY = "huflit-annotation-v1";
+let pool = [];          // [{id, query, candidates:[...]}]
+let state = {};         // id -> {relevant: [chunk_id], done: bool, noAnswer: bool}
+let current = 0, focus = 0;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+function load() {
+  try { state = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { state = {}; }
+}
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch { /* storage unavailable */ }
+}
+
+function stateFor(q) {
+  if (!state[q.id]) {
+    state[q.id] = { relevant: q.candidates.filter((c) => c.labelled_relevant).map((c) => c.chunk_id), done: false, noAnswer: false };
+  }
+  return state[q.id];
+}
+
+function highlight(text, query) {
+  const words = [...new Set(query.toLowerCase().split(/\s+/).filter((w) => w.length >= 3))];
+  let html = esc(text);
+  for (const w of words) {
+    html = html.replace(new RegExp(`(${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi"), "<mark>$1</mark>");
+  }
+  return html;
+}
+
+function renderList() {
+  $("list").innerHTML = pool.map((q, i) => {
+    const s = stateFor(q);
+    const st = s.done ? (s.noAnswer ? "∅" : `✓${s.relevant.length}`) : "";
+    return `<div data-i="${i}" class="${i === current ? "active" : ""}"><span class="st">${st}</span>${esc(q.id)} · ${esc(q.query)}</div>`;
+  }).join("");
+  const done = pool.filter((q) => stateFor(q).done).length;
+  $("progress").textContent = `${done}/${pool.length} câu đã xong`;
+}
+
+function renderView() {
+  const q = pool[current];
+  if (!q) return;
+  const s = stateFor(q);
+  const cands = q.candidates.map((c, i) => {
+    const rel = s.relevant.includes(c.chunk_id);
+    const ranks = Object.entries(c.ranks).map(([k, v]) => `${k}#${v}`).join(" · ") || "chỉ có trong nhãn cũ";
+    return `<div class="cand ${rel ? "rel" : ""} ${i === focus ? "focus" : ""}" data-i="${i}">
+      <div class="top"><input type="checkbox" ${rel ? "checked" : ""} tabindex="-1">
+        <span class="title">${esc(c.chunk_title || c.doc_title)}</span></div>
+      <div class="meta">${esc(c.doc_title)} · ${esc(c.date_posted || "")} · ${esc(c.chunk_id)} · ${esc(ranks)}</div>
+      <pre>${highlight(c.text, q.query)}</pre></div>`;
+  }).join("");
+  $("view").innerHTML = `
+    <p class="query">${esc(q.query)}</p>
+    <div class="hint">${esc(q.id)} · ${q.candidates.length} ứng viên · Phím: J/K chọn, Space đánh dấu liên quan, E mở rộng, Enter xong & sang câu sau, N không có đáp án.
+      ${s.noAnswer ? '<span class="noanswer">· Đã đánh dấu: không có đáp án</span>' : ""}</div>
+    ${cands}
+    <div class="actions">
+      <button id="noans">Không có đáp án trong kho (N)</button>
+      <button id="next" class="primary">Xong, câu tiếp theo (Enter)</button>
+    </div>`;
+  $("noans").onclick = markNoAnswer;
+  $("next").onclick = finish;
+  document.querySelectorAll(".cand").forEach((el) => {
+    el.onclick = (e) => { focus = +el.dataset.i; if (e.target.tagName !== "PRE") toggle(); else { el.classList.toggle("expanded"); renderFocus(); } };
+  });
+  renderFocus();
+}
+
+function renderFocus() {
+  document.querySelectorAll(".cand").forEach((el) => el.classList.toggle("focus", +el.dataset.i === focus));
+  document.querySelector(".cand.focus")?.scrollIntoView({ block: "nearest" });
+}
+
+function toggle() {
+  const q = pool[current], s = stateFor(q), id = q.candidates[focus]?.chunk_id;
+  if (!id) return;
+  s.relevant = s.relevant.includes(id) ? s.relevant.filter((x) => x !== id) : [...s.relevant, id];
+  s.noAnswer = false;
+  save(); renderView(); renderList();
+}
+
+function markNoAnswer() {
+  const s = stateFor(pool[current]);
+  s.relevant = []; s.noAnswer = true; s.done = true;
+  save(); go(current + 1);
+}
+
+function finish() {
+  const s = stateFor(pool[current]);
+  s.done = true; s.noAnswer = s.relevant.length === 0;
+  save(); go(current + 1);
+}
+
+function go(i) {
+  current = Math.max(0, Math.min(pool.length - 1, i)); focus = 0;
+  renderList(); renderView();
+}
+
+function exportLabels() {
+  const labels = pool.filter((q) => stateFor(q).done).map((q) => ({ id: q.id, relevant_chunk_ids: stateFor(q).relevant }));
+  const blob = new Blob([JSON.stringify(labels, null, 1)], { type: "application/json" });
+  const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: "labels.json" });
+  a.click(); URL.revokeObjectURL(a.href);
+}
+
+$("file").onchange = async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  pool = JSON.parse(await f.text());
+  load();
+  const firstOpen = pool.findIndex((q) => !stateFor(q).done);
+  go(firstOpen === -1 ? 0 : firstOpen);
+};
+$("export").onclick = exportLabels;
+$("list").onclick = (e) => { const d = e.target.closest("[data-i]"); if (d) go(+d.dataset.i); };
+document.addEventListener("keydown", (e) => {
+  if (!pool.length || e.target.tagName === "INPUT") return;
+  const n = pool[current].candidates.length;
+  if (e.key === "j" || e.key === "ArrowDown") { focus = Math.min(n - 1, focus + 1); renderFocus(); e.preventDefault(); }
+  else if (e.key === "k" || e.key === "ArrowUp") { focus = Math.max(0, focus - 1); renderFocus(); e.preventDefault(); }
+  else if (e.key === " ") { toggle(); e.preventDefault(); }
+  else if (e.key === "e") { document.querySelector(".cand.focus")?.classList.toggle("expanded"); }
+  else if (e.key === "Enter") { finish(); }
+  else if (e.key === "n") { markNoAnswer(); }
+});
+</script>
+</body>
+</html>

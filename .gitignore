@@ -10,3 +10,5 @@ generate_commits*.sh
 *.egg-info/
 .mypy_cache/
 .ruff_cache/
+eval/annotation/pool.json
+eval/annotation/labels*.json

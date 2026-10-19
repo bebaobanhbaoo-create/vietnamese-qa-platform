@@ -103,8 +103,8 @@ class Settings(BaseSettings):
         return self.root_dir / "eval"
 
     @property
-    def test_queries_path(self) -> Path:
-        return self.eval_dir / "test_queries.json"
+    def testset_path(self) -> Path:
+        return self.eval_dir / "testset.jsonl"
 
 
 @lru_cache
