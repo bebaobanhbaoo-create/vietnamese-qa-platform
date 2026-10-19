@@ -4,3 +4,6 @@ venv/
 .env
 *.DS_Store
 generate_commits*.sh
+.venv/
+.pytest_cache/
+.cache/
