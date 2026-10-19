@@ -36,6 +36,21 @@ class Bm25Settings(BaseModel):
     tokenizer: Literal["whitespace", "words", "pyvi"] = "whitespace"
 
 
+class GenerationSettings(BaseModel):
+    """Answer generation with a local model served by Ollama (https://ollama.com)."""
+
+    ollama_url: str = "http://localhost:11434"
+    model: str = "qwen2.5:7b-instruct"
+    temperature: float = 0.1
+    max_tokens: int = 512
+    # Context window passed to Ollama; prompt + answer must fit.
+    num_ctx: int = 4096
+    # Retrieved chunks shown to the model, and a word budget for all of them together.
+    top_k: int = 5
+    max_context_words: int = 1500
+    timeout_s: float = 120.0
+
+
 class IndexSettings(BaseModel):
     # faiss: exact search, rebuilt from scratch. qdrant: embedded Qdrant with payload filters and
     # incremental updates (only new or changed chunks are re-embedded).
@@ -88,6 +103,7 @@ class Settings(BaseSettings):
     index: IndexSettings = IndexSettings()
     retrieval: RetrievalSettings = RetrievalSettings()
     rerank: RerankSettings = RerankSettings()
+    generation: GenerationSettings = GenerationSettings()
 
     @property
     def data_dir(self) -> Path:
