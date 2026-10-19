@@ -116,6 +116,78 @@ def query(
         typer.echo(f"    {r['text'][:200]}...\n")
 
 
+@app.command()
+def ask(
+    question: Annotated[str, typer.Argument(help="Question in Vietnamese")],
+    model: Annotated[str | None, typer.Option(help="Ollama model, e.g. qwen2.5:7b-instruct")] = None,
+    rerank: Annotated[str | None, typer.Option(help="Cross-encoder model to rerank with")] = None,
+    newest_only: Annotated[bool, typer.Option(help="Only the newest version of each regulation")] = False,
+    stream: Annotated[bool, typer.Option(help="Print the answer as it is generated")] = True,
+) -> None:
+    """Answer a question with cited sources (retrieval + a local LLM through Ollama)."""
+    from huflit_qa.generation.citations import check_citations
+    from huflit_qa.generation.llm import OllamaLLM
+    from huflit_qa.generation.rag import RAGPipeline
+    from huflit_qa.retrieval.filters import SearchFilters
+    from huflit_qa.retrieval.hybrid import HybridRetriever
+
+    settings = with_reranker(get_settings(), rerank)
+    gen = settings.generation.model_copy(update={"model": model} if model else {})
+    llm = OllamaLLM(gen.model, gen.ollama_url, gen.temperature, gen.max_tokens, gen.num_ctx, gen.timeout_s)
+    pipeline = RAGPipeline(HybridRetriever(settings), llm, gen)
+    filters = SearchFilters(newest_only=newest_only)
+
+    if stream:
+        sources, tokens = pipeline.stream(question, filters)
+        parts = []
+        for token in tokens:
+            parts.append(token)
+            typer.echo(token, nl=False)
+        typer.echo("")
+        check = check_citations("".join(parts), len(sources))
+    else:
+        result = pipeline.answer(question, filters)
+        typer.echo(result.answer)
+        sources, check = result.sources, result.citations
+
+    typer.echo("\nNguồn:")
+    for n, src in enumerate(sources, 1):
+        marker = "*" if n in check.cited else " "
+        title = src["chunk_title"] or src["doc_title"]
+        typer.echo(f" {marker}[{n}] {title} — {src['source_url']}")
+    if check.invalid:
+        typer.echo(f"Cảnh báo: trích dẫn không tồn tại {check.invalid}", err=True)
+
+
+@app.command("eval-answers")
+def eval_answers(
+    model: Annotated[str | None, typer.Option(help="Ollama model")] = None,
+    rerank: Annotated[str | None, typer.Option(help="Cross-encoder model to rerank with")] = None,
+    split: Annotated[str, typer.Option(help="dev | test | all")] = "dev",
+    limit: Annotated[int | None, typer.Option(help="Only the first N queries")] = None,
+    output: Annotated[Path | None, typer.Option(help="Save the report as JSON")] = None,
+) -> None:
+    """Generate answers for labelled queries and score citations and refusals."""
+    from huflit_qa.evaluation.answer_eval import format_answer_report, run_answer_eval
+    from huflit_qa.generation.llm import OllamaLLM
+    from huflit_qa.generation.rag import RAGPipeline
+    from huflit_qa.retrieval.hybrid import HybridRetriever
+
+    settings = with_reranker(get_settings(), rerank)
+    gen = settings.generation.model_copy(update={"model": model} if model else {})
+    llm = OllamaLLM(gen.model, gen.ollama_url, gen.temperature, gen.max_tokens, gen.num_ctx, gen.timeout_s)
+    pipeline = RAGPipeline(HybridRetriever(settings), llm, gen)
+    answers_path = output.with_suffix(".answers.jsonl") if output else None
+    report = run_answer_eval(
+        settings, pipeline, None if split == "all" else split, limit, answers_path=answers_path
+    )
+    typer.echo(format_answer_report(report))
+    if output:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        typer.echo(f"\nSaved -> {output} (answers: {answers_path})")
+
+
 @app.command("eval")
 def evaluate(
     mode: Annotated[str, typer.Option(help="bm25 | dense | hybrid | rerank | all")] = "all",
