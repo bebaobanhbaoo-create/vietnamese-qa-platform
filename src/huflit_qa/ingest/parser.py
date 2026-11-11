@@ -247,6 +247,26 @@ def _is_vague(text: str) -> bool:
     return cleaned in VAGUE_LINK_TEXTS or len(cleaned) < 4
 
 
+# Longest first, so "chi tiết tại đây" is removed whole rather than leaving "chi tiết" behind.
+# Iterating the set directly made the result depend on Python's per-process string hashing.
+_VAGUE_TRAILING = [
+    re.compile(re.escape(v) + r"\s*$", re.IGNORECASE)
+    for v in sorted(VAGUE_LINK_TEXTS, key=lambda v: (-len(v), v))
+]
+
+
+def _strip_vague_suffix(text: str) -> str:
+    changed = True
+    while changed:
+        changed = False
+        for pattern in _VAGUE_TRAILING:
+            stripped = pattern.sub("", text).strip()
+            if stripped != text:
+                text, changed = stripped, True
+                break
+    return text
+
+
 def _get_context_text(tag) -> str:
     parents_to_check = [tag.parent]
     if tag.parent:
@@ -256,8 +276,7 @@ def _get_context_text(tag) -> str:
             break
         if parent.name in ("p", "li", "td", "span", "div", "strong", "em"):
             ctx = _clean_text(parent.get_text(separator=" ", strip=True))
-            for vague in VAGUE_LINK_TEXTS:
-                ctx = re.sub(re.escape(vague) + r"\s*$", "", ctx, flags=re.IGNORECASE).strip()
+            ctx = _strip_vague_suffix(ctx)
             ctx = re.sub(r"[<{(\[]+\s*$", "", ctx).strip()
             ctx = re.sub(r"[,;:\.]+$", "", ctx).strip()
             if ctx and len(ctx) > 5:
@@ -285,10 +304,15 @@ def _is_boilerplate(url: str) -> bool:
     netloc = parsed.netloc.lower()
     path = parsed.path.lower()
     if not netloc or netloc == "portal.huflit.edu.vn":
-        boilerplate_paths = ["/", "/login", "/news/type/", "/public/tracuu", "/content/"]
-        for bp in boilerplate_paths:
-            if path.startswith(bp):
-                return True
+        # Files hosted on the portal itself are attachments, wherever they live.
+        if any(path.endswith(ext) for ext in FILE_EXTENSIONS):
+            return False
+        if path in ("", "/"):
+            return True
+        # "/" used to be a prefix here, which matched every path and dropped portal-hosted files.
+        boilerplate_paths = ["/login", "/news/type/", "/public/tracuu", "/content/"]
+        if any(path.startswith(bp) for bp in boilerplate_paths):
+            return True
         return not path.startswith("/news/detail/")
     return any(netloc == excluded or netloc.endswith("." + excluded) for excluded in EXCLUDED_DOMAINS)
 

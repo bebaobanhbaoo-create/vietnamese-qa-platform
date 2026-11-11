@@ -90,10 +90,20 @@ huflit-qa serve --port 8080          # chat page at http://127.0.0.1:8080/, Open
 
 Every response carries an `x-request-id`; logs include it with the route, status and duration.
 
+## Docker
+
+```bash
+docker compose up -d                                         # API + Ollama (GPU if available)
+docker compose exec ollama ollama pull qwen2.5:7b-instruct   # once, ~4.7 GB
+```
+
+The API image is CPU-only (PyTorch CPU wheels), runs as a non-root user, ships the prebuilt index and the embedding model so it starts offline, and has a health check. Tagging `v*` publishes it to GitHub Container Registry.
+
 ## Development
 
 ```bash
 make check      # ruff lint + format check, mypy, pytest
+pytest tests/integration   # end to end on a tiny corpus with the real embedding model
 make format     # auto-fix lint and formatting
 ```
 
