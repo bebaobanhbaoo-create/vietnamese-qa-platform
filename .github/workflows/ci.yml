@@ -4,8 +4,13 @@ on:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
+    name: lint, types, unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -13,12 +18,59 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-      # Unit tests need numpy, BM25, pyvi and FAISS but no model weights, so torch and
-      # sentence-transformers are skipped; the full install is exercised in phase 5.
+      # Unit tests need numpy, BM25, pyvi, FAISS, Qdrant and FastAPI but no model weights,
+      # so torch and sentence-transformers are left to the integration job.
       - run: pip install --no-deps -e .
       - run: >
-          pip install "pydantic==2.13.4" "pydantic-settings==2.15.0" "pytest==9.1.1" "ruff==0.14.3"
-          "numpy==2.3.5" "rank-bm25==0.2.2" "pyvi==0.1.1" "faiss-cpu==1.10.0" "qdrant-client==1.19.1" "httpx==0.28.1" "fastapi==0.162.4" "prometheus-client==0.23.1"
+          pip install "pydantic==2.13.4" "pydantic-settings==2.15.0" "pytest==9.1.1" "pytest-cov==7.1.0"
+          "ruff==0.14.3" "mypy==1.18.2" "types-requests"
+          "numpy==2.3.5" "rank-bm25==0.2.2" "pyvi==0.1.1" "faiss-cpu==1.10.0" "qdrant-client==1.19.1"
+          "httpx==0.28.1" "fastapi==0.162.4" "prometheus-client==0.23.1" "beautifulsoup4==4.12.3" "lxml==5.1.0"
       - run: ruff check .
       - run: ruff format --check .
-      - run: pytest -q
+      - run: mypy
+      - run: pytest tests/unit -q --cov=huflit_qa --cov-report=term-missing:skip-covered
+
+  integration:
+    name: integration (real embedding model)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-minilm-v1
+      - run: pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install -e ".[dev]"
+      - run: pytest tests/integration -q
+
+  docker:
+    name: docker image builds and serves search
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: huflit-qa:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Start the container and wait for /health
+        run: |
+          docker run -d --name api -p 8080:8080 huflit-qa:ci
+          for i in $(seq 1 60); do
+            if curl -fs http://localhost:8080/health; then exit 0; fi
+            sleep 3
+          done
+          docker logs api
+          exit 1
+      - name: Search works inside the container
+        run: |
+          curl -fs -X POST http://localhost:8080/v1/search -H 'Content-Type: application/json' \
+            -d '{"query": "điều kiện xét tốt nghiệp", "top_k": 3}' | python3 -m json.tool | head -20
