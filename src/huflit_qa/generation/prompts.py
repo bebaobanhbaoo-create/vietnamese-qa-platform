@@ -26,6 +26,8 @@ def format_source(index: int, chunk: dict) -> str:
         meta.append(f"đăng {chunk['date_posted']}")
     if chunk.get("issuer_unit"):
         meta.append(chunk["issuer_unit"])
+    if chunk.get("on_portal") is False:
+        meta.append("đã gỡ khỏi portal")
     header = f"[{index}] {title}" + (f" ({'; '.join(meta)})" if meta else "")
     return f"{header}\n{chunk['text'].strip()}"
 
