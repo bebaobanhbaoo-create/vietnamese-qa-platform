@@ -25,7 +25,7 @@ jobs:
           pip install "pydantic==2.13.4" "pydantic-settings==2.15.0" "pytest==9.1.1" "pytest-cov==7.1.0"
           "ruff==0.14.3" "mypy==1.18.2" "types-requests"
           "numpy==2.3.5" "rank-bm25==0.2.2" "pyvi==0.1.1" "faiss-cpu==1.10.0" "qdrant-client==1.19.1"
-          "httpx==0.28.1" "fastapi==0.162.4" "prometheus-client==0.23.1" "beautifulsoup4==4.12.3" "lxml==5.1.0"
+          "httpx==0.28.1" "fastapi==0.162.4" "prometheus-client==0.23.1" "beautifulsoup4==4.12.3" "lxml==5.1.0" "requests==2.34.2"
       - run: ruff check .
       - run: ruff format --check .
       - run: mypy
@@ -89,3 +89,5 @@ jobs:
           --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-3.3.2/constraints-3.11.txt"
       - run: pip install "pytest==9.1.1"
       - run: pytest tests/airflow -q
+        env:
+          AIRFLOW__CORE__LOAD_EXAMPLES: "false"
