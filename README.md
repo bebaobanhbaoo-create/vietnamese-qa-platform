@@ -12,6 +12,7 @@ Ask a question in Vietnamese about the academic regulations and announcements of
 - **Retrieval:** BM25 + multilingual embeddings fused with Reciprocal Rank Fusion, optional cross-encoder reranking, metadata filters (document type, issuing office, year, newest version), FAISS or Qdrant with incremental updates.
 - **Answers:** a local LLM (Qwen2.5-7B through Ollama) answering only from numbered sources, with `[n]` citations checked automatically.
 - **Evaluation:** pooled relevance labels, chunking-independent scoring, paired bootstrap confidence intervals, answer-level grounding and refusal metrics.
+- **Data pipeline:** weekly Airflow DAG with incremental crawling, attachment download, a data-quality gate, evaluation regression check, automatic rollback and soft deletes ([docs/PIPELINE.md](docs/PIPELINE.md)).
 - **Engineering:** typed package and CLI, FastAPI with streaming and Prometheus metrics, Docker, CI with unit, integration and container tests.
 
 > Status: retrieval and RAG work end to end and are measured on 30 dev queries. The test set is being re-labelled (159 queries, pooled from four systems) before the final configuration is chosen and reported on the held-out split; see [docs/UPGRADE_PLAN.md](docs/UPGRADE_PLAN.md).
