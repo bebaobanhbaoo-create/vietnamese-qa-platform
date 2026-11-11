@@ -3,10 +3,13 @@
 Runs in the CI job that installs Airflow; skipped elsewhere (Airflow does not run on Windows).
 """
 
+import os
 from pathlib import Path
 
 import pytest
 
+# Airflow 3 reads this instead of the removed DagBag(include_examples=...) argument.
+os.environ.setdefault("AIRFLOW__CORE__LOAD_EXAMPLES", "false")
 pytest.importorskip("airflow")
 
 import itertools
@@ -18,7 +21,7 @@ DAGS = Path(__file__).resolve().parents[2] / "deploy" / "airflow" / "dags"
 
 @pytest.fixture(scope="module")
 def dag():
-    bag = DagBag(dag_folder=str(DAGS), include_examples=False)
+    bag = DagBag(dag_folder=str(DAGS))
     assert bag.import_errors == {}
     return bag.get_dag("huflit_weekly_ingest")
 
