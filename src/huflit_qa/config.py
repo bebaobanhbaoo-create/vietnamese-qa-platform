@@ -54,9 +54,10 @@ class GenerationSettings(BaseModel):
 
 
 class IndexSettings(BaseModel):
-    # faiss: exact search, rebuilt from scratch. qdrant: embedded Qdrant with payload filters and
-    # incremental updates (only new or changed chunks are re-embedded).
-    vector_store: Literal["faiss", "qdrant"] = "faiss"
+    # Vectors live in Qdrant. Unset: embedded Qdrant in <index>/qdrant (shipped with the index).
+    # Set (e.g. http://qdrant:6333): a Qdrant server, seeded with `huflit-qa push-vectors`.
+    qdrant_url: str | None = None
+    qdrant_api_key: str | None = None
 
 
 class EmbeddingSettings(BaseModel):
@@ -164,16 +165,8 @@ class Settings(BaseSettings):
         return self.index_dir / "bm25.pkl"
 
     @property
-    def faiss_path(self) -> Path:
-        return self.index_dir / "faiss.bin"
-
-    @property
     def qdrant_path(self) -> Path:
         return self.index_dir / "qdrant"
-
-    @property
-    def faiss_ids_path(self) -> Path:
-        return self.index_dir / "chunk_ids.json"
 
     @property
     def eval_dir(self) -> Path:

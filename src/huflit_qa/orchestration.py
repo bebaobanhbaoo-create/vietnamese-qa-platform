@@ -112,9 +112,13 @@ def step_quality_gate(settings: Settings, previous: dict) -> dict:
 def step_build_index(settings: Settings) -> dict:
     from huflit_qa.pipeline import build_index
 
-    build_index(settings)
+    vectors = build_index(settings)  # Qdrant sync counts: embedded / payload_updated / deleted
     manifest = json.loads(settings.manifest_path.read_text(encoding="utf-8"))
-    return {"num_chunks": manifest["num_chunks"], "source_digest": manifest["source_digest"]}
+    return {
+        "num_chunks": manifest["num_chunks"],
+        "source_digest": manifest["source_digest"],
+        "vectors": vectors,
+    }
 
 
 def step_eval_regression(settings: Settings, baseline_path: Path, max_drop: float = 0.05) -> dict:

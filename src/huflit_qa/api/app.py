@@ -142,7 +142,9 @@ def create_app(services: Services | None = None, settings: Settings | None = Non
                 "num_chunks": manifest.get("num_chunks"),
                 "chunking": manifest.get("chunking", {}).get("strategy"),
                 "embedding": manifest.get("embedding", {}).get("model"),
-                "vector_store": manifest.get("index", {}).get("vector_store", "faiss"),
+                "vector_store": "qdrant server"
+                if getattr(getattr(svc.retriever, "store", None), "is_server", False)
+                else "qdrant embedded",
                 "rerank": svc.retriever.rerank_cfg.model if svc.retriever.reranker else None,
             },
             llm_model=svc.llm.model,

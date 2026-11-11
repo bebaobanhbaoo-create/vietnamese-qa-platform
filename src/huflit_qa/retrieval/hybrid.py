@@ -9,12 +9,21 @@ from huflit_qa.config import EmbeddingSettings, RerankSettings, RetrievalSetting
 from huflit_qa.indexing.bm25 import load_bm25
 from huflit_qa.indexing.encoders import Encoder
 from huflit_qa.indexing.manifest import load_manifest
-from huflit_qa.indexing.stores import FaissStore, QdrantStore, VectorStore
+from huflit_qa.indexing.stores import QdrantStore, VectorStore
 from huflit_qa.indexing.tokenize import get_tokenizer
 from huflit_qa.processing.chunker import index_text
 from huflit_qa.retrieval.filters import SearchFilters
 from huflit_qa.retrieval.reranker import CrossEncoderReranker
 from huflit_qa.retrieval.rrf import reciprocal_rank_fusion
+
+
+def newest_first(chunks: list[dict]) -> dict[str, int]:
+    """Tie-break rank for chunks with identical vectors: the same passage repeated in several
+    versions of a regulation. The newest version wins, then the most recent date, then file order."""
+    order = list(range(len(chunks)))
+    order.sort(key=lambda i: chunks[i].get("issued_date") or chunks[i].get("date_posted") or "", reverse=True)
+    order.sort(key=lambda i: chunks[i].get("newest_in_group") is not True)
+    return {chunks[i]["chunk_id"]: rank for rank, i in enumerate(order)}
 
 
 class HybridRetriever:
@@ -42,12 +51,13 @@ class HybridRetriever:
         self.chunk_map = {c["chunk_id"]: c for c in chunks}
 
         self.bm25, self.bm25_ids = load_bm25(settings.bm25_path)
-        store_type = self.manifest.get("index", {}).get("vector_store", "faiss")
-        self.store: VectorStore = (
-            QdrantStore(settings.qdrant_path)
-            if store_type == "qdrant"
-            else FaissStore(settings.faiss_path, settings.faiss_ids_path, self.chunk_map)
-        )
+        if self.manifest.get("index", {}).get("vector_store") != "qdrant":
+            raise ValueError(
+                f"{settings.manifest_path} predates the Qdrant store: rebuild with `huflit-qa index`"
+            )
+        store = QdrantStore.from_settings(settings)
+        store.tie_order = newest_first(chunks)
+        self.store: VectorStore = store
 
         if encoder is not None and encoder.model_name != self.embedding.model:
             raise ValueError(f"Index was built with {self.embedding.model}, encoder is {encoder.model_name}")

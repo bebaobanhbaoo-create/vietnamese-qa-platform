@@ -1,4 +1,4 @@
-"""End to end on a tiny corpus: flat records -> chunks -> BM25 + FAISS -> hybrid search -> API.
+"""End to end on a tiny corpus: flat records -> chunks -> BM25 + Qdrant -> hybrid search -> API.
 
 Uses the real embedding model (MiniLM, ~0.5 GB download, cached in CI), so it is skipped when
 sentence-transformers is not installed.
@@ -87,7 +87,7 @@ def retriever(settings) -> HybridRetriever:
 
 
 def test_index_files_and_manifest(settings):
-    for path in (settings.chunks_path, settings.bm25_path, settings.faiss_path, settings.manifest_path):
+    for path in (settings.chunks_path, settings.bm25_path, settings.qdrant_path, settings.manifest_path):
         assert path.exists()
     manifest = json.loads(settings.manifest_path.read_text(encoding="utf-8"))
     assert manifest["num_chunks"] == len(json.loads(settings.chunks_path.read_text(encoding="utf-8")))

@@ -15,5 +15,5 @@ def setup_logging(level: int = logging.INFO) -> None:
         datefmt="%H:%M:%S",
     )
     # sentence-transformers / httpx are chatty at INFO.
-    for noisy in ("sentence_transformers", "httpx", "urllib3", "faiss", "faiss.loader"):
+    for noisy in ("sentence_transformers", "httpx", "urllib3"):
         logging.getLogger(noisy).setLevel(logging.WARNING)

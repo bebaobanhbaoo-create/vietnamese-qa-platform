@@ -1,4 +1,4 @@
-"""Metadata filters shared by BM25, FAISS and Qdrant, so every backend returns the same subset."""
+"""Metadata filters shared by BM25 and Qdrant, so both retrievers search the same subset."""
 
 from pydantic import BaseModel
 
