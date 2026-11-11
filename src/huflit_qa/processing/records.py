@@ -18,6 +18,7 @@ def build_web_record(doc):
     record["doc_type"] = doc["doc_type"]
     record["category_name"] = doc["category_name"]
     record["issuer_unit"] = doc["issuer_unit"]
+    record["on_portal"] = doc.get("on_portal", True)
     record["attachment_index"] = None
     record["attachment_title"] = None
     record["attachment_url"] = None
@@ -57,6 +58,7 @@ def build_attachment_record(doc, attachment, index, attachments_base: Path, root
     record["doc_type"] = doc["doc_type"]
     record["category_name"] = doc["category_name"]
     record["issuer_unit"] = doc["issuer_unit"]
+    record["on_portal"] = doc.get("on_portal", True)
     record["attachment_index"] = index
     record["attachment_title"] = att_title
     record["attachment_url"] = attachment["url"]

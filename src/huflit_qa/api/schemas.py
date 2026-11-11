@@ -21,6 +21,7 @@ class Source(BaseModel):
     issued_date: str | None = None
     issuer_unit: str | None = None
     newest_in_group: bool | None = None
+    on_portal: bool | None = None  # False when the page is no longer listed on the portal
     score: float | None = None
 
 

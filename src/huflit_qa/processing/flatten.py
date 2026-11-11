@@ -27,6 +27,7 @@ def flatten_record(doc):
         "doc_type": doc["doc_type"],
         "category_name": doc.get("category_name"),
         "issuer_unit": doc.get("issuer_unit"),
+        "on_portal": doc.get("on_portal", True),
         "content_source": "web",
         "content_status": status,
         "content": content,

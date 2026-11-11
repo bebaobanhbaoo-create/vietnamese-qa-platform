@@ -122,6 +122,7 @@ class HybridRetriever:
                     "issued_date": chunk.get("issued_date"),
                     "issuer_unit": chunk.get("issuer_unit"),
                     "newest_in_group": chunk.get("newest_in_group"),
+                    "on_portal": chunk.get("on_portal", True),
                     "score": score,
                 }
             )

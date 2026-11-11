@@ -74,3 +74,18 @@ jobs:
         run: |
           curl -fs -X POST http://localhost:8080/v1/search -H 'Content-Type: application/json' \
             -d '{"query": "điều kiện xét tốt nghiệp", "top_k": 3}' | python3 -m json.tool | head -20
+
+  airflow-dag:
+    name: airflow DAG integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: >
+          pip install "apache-airflow==3.3.2"
+          --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-3.3.2/constraints-3.11.txt"
+      - run: pip install "pytest==9.1.1"
+      - run: pytest tests/airflow -q

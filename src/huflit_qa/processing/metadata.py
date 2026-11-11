@@ -26,6 +26,7 @@ def record_metadata(record: dict) -> dict:
     return {
         "doc_group": doc_group(record["id"]),
         "issuer_unit": record.get("issuer_unit"),
+        "on_portal": record.get("on_portal", True),
         "issued_date": parse_issued_date(record.get("content")) if is_regulation else None,
     }
 

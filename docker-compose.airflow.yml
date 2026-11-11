@@ -1,0 +1,33 @@
+# Weekly ingestion with Airflow (single-node "standalone" mode, for a laptop or a small VM).
+#
+#   docker compose -f docker-compose.airflow.yml up -d --build
+#   open http://localhost:8088                  # Airflow UI (no login in this local setup)
+#   docker compose -f docker-compose.airflow.yml exec airflow airflow dags trigger huflit_weekly_ingest
+#
+# Set HF_TOKEN in your shell or .env to let the publish step upload to the private dataset.
+
+services:
+  airflow:
+    build:
+      context: .
+      dockerfile: deploy/airflow/Dockerfile
+    image: huflit-qa-airflow:local
+    command: standalone
+    ports:
+      - "8088:8080"
+    environment:
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/huflit/deploy/airflow/dags
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DEFAULT_TIMEZONE: Asia/Ho_Chi_Minh
+      # Local setup only: every user is an admin, no login page.
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "true"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - .:/opt/huflit
+      - airflow-home:/opt/airflow
+      - hf-cache:/home/airflow/.cache/huggingface
+    restart: unless-stopped
+
+volumes:
+  airflow-home:
+  hf-cache:
