@@ -163,7 +163,9 @@ def test_server_mirrors_embedded_store(tmp_path):
             SearchFilters(doc_type="quy_che", year_from=2023),
             SearchFilters(newest_only=True),
         ):
-            assert server.search(query, 10, filters) == pytest.approx(local.search(query, 10, filters))
+            got, want = server.search(query, 10, filters), local.search(query, 10, filters)
+            assert [cid for cid, _ in got] == [cid for cid, _ in want]
+            assert [s for _, s in got] == pytest.approx([s for _, s in want], abs=1e-5)
     finally:
         server.client.delete_collection(QdrantStore.COLLECTION)
         server.close()
