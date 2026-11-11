@@ -21,6 +21,8 @@ class Completion:
 class LLM(Protocol):
     model: str
 
+    def available(self) -> tuple[bool, str | None]: ...
+
     def complete(self, messages: list[Message]) -> Completion: ...
 
     def stream(self, messages: list[Message]) -> Iterator[str]: ...
@@ -56,13 +58,32 @@ class OllamaLLM:
             f"then run `ollama pull {self.model}`."
         )
 
-    def complete(self, messages: list[Message]) -> Completion:
+    def available(self) -> tuple[bool, str | None]:
+        """Whether Ollama is reachable and the model has been pulled, with a reason if not."""
         try:
-            resp = httpx.post(
-                f"{self.base_url}/api/chat", json=self._payload(messages, False), timeout=self.timeout
-            )
-        except httpx.ConnectError as exc:
-            raise self._unavailable(exc) from exc
+            resp = httpx.get(f"{self.base_url}/api/tags", timeout=httpx.Timeout(3.0))
+            resp.raise_for_status()
+        except httpx.HTTPError as exc:
+            return False, f"Ollama unreachable at {self.base_url}: {exc}"
+        names = {m.get("name") for m in resp.json().get("models", [])}
+        if self.model in names or f"{self.model}:latest" in names:
+            return True, None
+        return False, f"Model {self.model} not pulled (run `ollama pull {self.model}`)"
+
+    def complete(self, messages: list[Message]) -> Completion:
+        # One retry on 5xx: Ollama can fail the first model load (e.g. a crashing GPU runner) and
+        # succeed on the next attempt with another runner.
+        for attempt in range(2):
+            try:
+                resp = httpx.post(
+                    f"{self.base_url}/api/chat", json=self._payload(messages, False), timeout=self.timeout
+                )
+            except httpx.ConnectError as exc:
+                raise self._unavailable(exc) from exc
+            if resp.status_code < 500:
+                break
+            if attempt == 1:
+                raise LLMUnavailableError(f"Ollama error {resp.status_code}: {resp.text[:300]}")
         if resp.status_code == 404:
             raise LLMUnavailableError(
                 f"Model {self.model} not found in Ollama: run `ollama pull {self.model}`."
@@ -81,7 +102,13 @@ class OllamaLLM:
             with httpx.stream(
                 "POST", f"{self.base_url}/api/chat", json=self._payload(messages, True), timeout=self.timeout
             ) as resp:
-                resp.raise_for_status()
+                if resp.status_code == 404:
+                    raise LLMUnavailableError(
+                        f"Model {self.model} not found: run `ollama pull {self.model}`."
+                    )
+                if resp.status_code >= 400:
+                    resp.read()
+                    raise LLMUnavailableError(f"Ollama error {resp.status_code}: {resp.text[:300]}")
                 for line in resp.iter_lines():
                     if not line:
                         continue
@@ -101,6 +128,9 @@ class FakeLLM:
     answer: str = "Theo quy định [1]."
     model: str = "fake"
     calls: list[list[Message]] = field(default_factory=list)
+
+    def available(self) -> tuple[bool, str | None]:
+        return True, None
 
     def complete(self, messages: list[Message]) -> Completion:
         self.calls.append(messages)

@@ -14,3 +14,4 @@ eval/annotation/pool.json
 eval/annotation/labels*.json
 data/experiments/
 eval/annotation/pool*.json
+.claude/

@@ -160,3 +160,21 @@ def test_score_answers():
     assert m["supported"] == 0.5 and m["false_refusal"] == 0.5 and m["correct_refusal"] == 1.0
     assert m["citation_precision"] == 1.0 and m["grounded"] == 1.0
     json.dumps(m)  # serialisable
+
+
+def test_ollama_retries_once_on_server_error(monkeypatch):
+    responses = iter(
+        [
+            httpx.Response(500, text="llama-server terminated", request=httpx.Request("POST", "http://x")),
+            httpx.Response(
+                200, json={"message": {"content": "OK [1]."}}, request=httpx.Request("POST", "http://x")
+            ),
+        ]
+    )
+    monkeypatch.setattr(httpx, "post", lambda url, json, timeout: next(responses))
+    assert OllamaLLM("qwen").complete([]).text == "OK [1]."
+
+    failing = lambda url, json, timeout: httpx.Response(500, text="boom", request=httpx.Request("POST", url))  # noqa: E731
+    monkeypatch.setattr(httpx, "post", failing)
+    with pytest.raises(LLMUnavailableError, match="Ollama error 500"):
+        OllamaLLM("qwen").complete([])
