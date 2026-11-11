@@ -12,6 +12,7 @@
 | 1 — Chuẩn hoá cấu trúc | ✅ Xong (PR #2) |
 | 2A — Bộ đánh giá | 🔶 Công cụ xong (nhánh `feat/eval-metrics-testset`); **chờ gán nhãn 159 câu** |
 | 3 — RAG | 🔶 Chạy thật với qwen2.5:7b qua Ollama, số liệu dev trong `eval/EXPERIMENTS_3.md`; **chờ review tính trung thực (20 câu) và nhãn mới** |
+| 5 — Test & CI/CD | 🔶 CI 3 job: lint + mypy + unit (độ phủ phần lõi 86%), integration với model thật, build Docker và gọi thử API; release image lên GHCR khi gắn tag (nhánh `ci/tests-docker`) |
 | 4 — API & demo | 🔶 FastAPI (`/v1/search`, `/v1/ask`, SSE, `/metrics`) + trang chat (nhánh `feat/api-demo`); chưa deploy |
 | 2C — Reranker + Qdrant | 🔶 Reranker, bộ lọc metadata, Qdrant tăng dần xong (nhánh `feat/reranker-qdrant`, xem `eval/EXPERIMENTS_2C.md`); đo lại khi có nhãn mới |
 | 2B — Chunking + embedding | 🔶 Đã chạy 14 cấu hình trên dev (nhánh `feat/chunking-embeddings`, xem `eval/EXPERIMENTS_2B.md`); **chọn cấu hình sau khi có nhãn mới** |
