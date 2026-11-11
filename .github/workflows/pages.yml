@@ -5,6 +5,7 @@ on:
     paths:
       - "data/index/**"
       - "deploy/static/**"
+      - "src/huflit_qa/api/static/**"
       - "scripts/build_static_demo.py"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
