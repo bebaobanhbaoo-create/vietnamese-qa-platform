@@ -14,6 +14,7 @@ class SearchRequest(BaseModel):
 class Source(BaseModel):
     chunk_id: str
     doc_title: str
+    doc_type: str | None = None  # "quy_che" | "thong_bao"
     chunk_title: str | None = None
     text: str
     source_url: str

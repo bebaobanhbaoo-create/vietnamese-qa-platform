@@ -20,6 +20,7 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
 
 from huflit_qa import __version__
@@ -205,6 +206,9 @@ def create_app(services: Services | None = None, settings: Settings | None = Non
         return StreamingResponse(
             events(), media_type="text/event-stream", headers={"Cache-Control": "no-cache"}
         )
+
+    # Stylesheet and UI helpers shared with the static search demo.
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
     @app.get("/", include_in_schema=False)
     def index() -> FileResponse:

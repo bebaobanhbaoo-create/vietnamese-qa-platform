@@ -116,6 +116,7 @@ class HybridRetriever:
                     "chunk_id": chunk_id,
                     "text": chunk["text"],
                     "doc_title": chunk["doc_title"],
+                    "doc_type": chunk.get("doc_type"),
                     "chunk_title": chunk.get("chunk_title"),
                     "source_url": chunk["source_url"],
                     "date_posted": chunk.get("date_posted"),
