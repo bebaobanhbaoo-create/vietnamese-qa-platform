@@ -2,10 +2,10 @@
 
     python scripts/build_static_demo.py           # -> deploy/static/data/
 
-Writes the chunk texts and metadata, the dense vectors exactly as stored in FAISS (float32), and the
+Writes the chunk texts and metadata, the dense vectors exactly as stored in Qdrant (float32), and the
 settings the page must reproduce: BM25 tokenizer, RRF constant, retrieval depths, embedding model.
 The page re-implements BM25Okapi and RRF in JavaScript and embeds the query in the browser.
-Needs only numpy and faiss, not torch.
+Needs only numpy and qdrant-client, not torch.
 """
 
 import argparse
@@ -13,8 +13,8 @@ import json
 import shutil
 from pathlib import Path
 
-import faiss
 import numpy as np
+from qdrant_client import QdrantClient
 
 ROOT = Path(__file__).resolve().parents[1]
 SHARED_DIR = ROOT / "src" / "huflit_qa" / "api" / "static"
@@ -27,6 +27,24 @@ FIELDS = (
 BROWSER_MODELS = {"paraphrase-multilingual-MiniLM-L12-v2": "Xenova/paraphrase-multilingual-MiniLM-L12-v2"}
 
 
+def read_vectors(qdrant_dir: Path, chunk_ids: list[str]) -> np.ndarray:
+    """Vectors of the embedded Qdrant collection, in chunk order."""
+    client = QdrantClient(path=str(qdrant_dir))
+    by_id: dict = {}
+    offset = None
+    while True:
+        points, offset = client.scroll(
+            "chunks", with_payload=["chunk_id"], with_vectors=True, limit=512, offset=offset
+        )
+        by_id.update({(p.payload or {})["chunk_id"]: p.vector for p in points})
+        if offset is None:
+            break
+    client.close()
+    if set(by_id) != set(chunk_ids):
+        raise SystemExit("Qdrant collection and chunks.json disagree: rebuild the index")
+    return np.asarray([by_id[cid] for cid in chunk_ids], dtype="<f4")
+
+
 def build(index_dir: Path, out_dir: Path) -> dict:
     manifest = json.loads((index_dir / "manifest.json").read_text(encoding="utf-8"))
     if manifest["bm25"]["tokenizer"] != "whitespace" or manifest["chunking"].get("context_prefix"):
@@ -35,11 +53,10 @@ def build(index_dir: Path, out_dir: Path) -> dict:
     if model not in BROWSER_MODELS:
         raise SystemExit(f"No browser build known for {model}")
 
-    chunk_ids = json.loads((index_dir / "chunk_ids.json").read_text(encoding="utf-8"))
-    chunks = {c["chunk_id"]: c for c in json.loads((index_dir / "chunks.json").read_text(encoding="utf-8"))}
-    index = faiss.read_index(str(index_dir / "faiss.bin"))
-    vectors = index.reconstruct_n(0, index.ntotal).astype("<f4")
-    assert vectors.shape[0] == len(chunk_ids)
+    chunk_list = json.loads((index_dir / "chunks.json").read_text(encoding="utf-8"))
+    chunk_ids = [c["chunk_id"] for c in chunk_list]  # the order BM25 was built in
+    chunks = {c["chunk_id"]: c for c in chunk_list}
+    vectors = read_vectors(index_dir / "qdrant", chunk_ids)
 
     out_dir.mkdir(parents=True, exist_ok=True)
     rows = [{f: chunks[cid].get(f) for f in FIELDS} for cid in chunk_ids]

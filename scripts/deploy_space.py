@@ -24,7 +24,7 @@ def stage(target: Path) -> None:
         shutil.copytree(
             ROOT / folder,
             target / folder,
-            ignore=shutil.ignore_patterns("__pycache__", "*.egg-info", "qdrant"),
+            ignore=shutil.ignore_patterns("__pycache__", "*.egg-info", ".lock"),
         )
     # The Space card doubles as the README that pyproject.toml points to.
     shutil.copy2(ROOT / "deploy" / "space" / "README.md", target / "README.md")
