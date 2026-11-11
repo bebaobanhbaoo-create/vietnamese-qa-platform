@@ -3,29 +3,38 @@
 Runs in the CI job that installs Airflow; skipped elsewhere (Airflow does not run on Windows).
 """
 
+import os
 from pathlib import Path
 
 import pytest
 
+# Airflow 3 reads this instead of the removed DagBag(include_examples=...) argument.
+os.environ.setdefault("AIRFLOW__CORE__LOAD_EXAMPLES", "false")
 pytest.importorskip("airflow")
 
 import itertools
 
-from airflow.models.dagbag import DagBag
+try:
+    from airflow.dag_processing.dagbag import DagBag
+except ImportError:  # Airflow 2
+    from airflow.models.dagbag import DagBag
 
 DAGS = Path(__file__).resolve().parents[2] / "deploy" / "airflow" / "dags"
 
 
 @pytest.fixture(scope="module")
 def dag():
-    bag = DagBag(dag_folder=str(DAGS), include_examples=False)
+    bag = DagBag(dag_folder=str(DAGS))
     assert bag.import_errors == {}
-    return bag.get_dag("huflit_weekly_ingest")
+    # bag.dags is in memory; get_dag() would query the metadata database, which CI does not create.
+    return bag.dags.get("huflit_weekly_ingest")
 
 
 def test_schedule_and_limits(dag):
     assert dag is not None
-    assert dag.timetable.summary == "0 2 * * 1"
+    # The SDK timetable exposes `expression`; the core one keeps it in `_expression`.
+    timetable = dag.timetable
+    assert (getattr(timetable, "expression", None) or getattr(timetable, "_expression", None)) == "0 2 * * 1"
     assert dag.catchup is False and dag.max_active_runs == 1
 
 
