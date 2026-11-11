@@ -60,11 +60,15 @@ class Services:
 
 
 def build_services(settings: Settings) -> Services:
-    from huflit_qa.generation.llm import OllamaLLM
+    from huflit_qa.generation.llm import DisabledLLM, OllamaLLM
 
     gen = settings.generation
     retriever = HybridRetriever(settings)
-    llm = OllamaLLM(gen.model, gen.ollama_url, gen.temperature, gen.max_tokens, gen.num_ctx, gen.timeout_s)
+    llm: LLM = (
+        OllamaLLM(gen.model, gen.ollama_url, gen.temperature, gen.max_tokens, gen.num_ctx, gen.timeout_s)
+        if gen.enabled
+        else DisabledLLM()
+    )
     return Services(retriever, RAGPipeline(retriever, llm, gen), llm, threading.Lock())
 
 
@@ -126,11 +130,13 @@ def create_app(services: Services | None = None, settings: Settings | None = Non
 
     @app.get("/ready", response_model=Readiness, tags=["ops"])
     def ready(svc: ServicesDep) -> Readiness:
-        """Readiness: indexes are loaded and the LLM can answer."""
+        """Readiness: indexes are loaded and, unless search-only, the LLM can answer."""
         llm_ok, detail = svc.llm.available()
+        search_only = svc.llm.model == "disabled"
         manifest = svc.retriever.manifest
         return Readiness(
-            ready=llm_ok,
+            ready=llm_ok or search_only,
+            mode="search" if search_only else "rag",
             index={
                 "num_chunks": manifest.get("num_chunks"),
                 "chunking": manifest.get("chunking", {}).get("strategy"),

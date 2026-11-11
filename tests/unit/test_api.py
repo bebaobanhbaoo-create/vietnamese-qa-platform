@@ -119,3 +119,15 @@ def test_index_page_and_metrics():
         assert "Hỏi đáp quy chế HUFLIT" in client.get("/").text
         client.get("/health")
         assert "huflit_requests_total" in client.get("/metrics").text
+
+
+def test_search_only_mode_reports_ready_and_refuses_answers():
+    from huflit_qa.generation.llm import DisabledLLM
+
+    client, _ = make_client(llm=DisabledLLM())
+    with client:
+        ready = client.get("/ready").json()
+        assert ready["ready"] is True and ready["mode"] == "search" and ready["llm_available"] is False
+        assert client.post("/v1/search", json={"query": "tín chỉ"}).status_code == 200
+        resp = client.post("/v1/ask", json={"question": "Tối đa bao nhiêu tín chỉ?"})
+    assert resp.status_code == 503 and "search only" in resp.json()["detail"]

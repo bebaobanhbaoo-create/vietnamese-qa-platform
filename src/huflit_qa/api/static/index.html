@@ -47,12 +47,16 @@
   .src pre { white-space: pre-wrap; font: 14px/1.55 system-ui, sans-serif; margin: 6px 0 0; }
   a { color: var(--accent); }
   .err { color: var(--warn); margin-top: 16px; }
+  .banner { background: var(--accent-soft); color: var(--text); border-radius: 10px; padding: 10px 14px; font-size: 14px; margin: 0 0 16px; }
+  mark { background: #fde68a; color: inherit; border-radius: 3px; }
+  @media (prefers-color-scheme: dark) { mark { background: #854d0e; } }
 </style>
 </head>
 <body>
 <main>
   <h1>Hỏi đáp quy chế HUFLIT</h1>
   <p class="sub">Trả lời từ quy chế và thông báo trên cổng thông tin sinh viên, kèm trích dẫn nguồn. Kiểm tra lại văn bản gốc trước khi làm thủ tục.</p>
+  <p class="banner" id="banner" hidden>Bản demo này chỉ <b>tìm kiếm</b> trong 1.209 đoạn quy chế và thông báo (BM25 + embedding, hợp nhất bằng RRF). Phần hỏi đáp có trích dẫn chạy với LLM local qua Ollama — xem ảnh động trong README của repo.</p>
 
   <form id="form">
     <input id="q" type="text" placeholder="Ví dụ: Điều kiện xét tốt nghiệp là gì?" autocomplete="off" required minlength="2" maxlength="500">
@@ -79,8 +83,55 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
 $("examples").innerHTML = EXAMPLES.map((e) => `<button type="button">${esc(e)}</button>`).join("");
-$("examples").onclick = (e) => { if (e.target.tagName === "BUTTON") { $("q").value = e.target.textContent; ask(); } };
-$("form").onsubmit = (e) => { e.preventDefault(); ask(); };
+let searchOnly = false;
+fetch("/ready").then((r) => r.json()).then((info) => {
+  searchOnly = info.mode === "search";
+  if (searchOnly) {
+    $("banner").hidden = false;
+    $("send").textContent = "Tìm";
+    $("q").placeholder = "Ví dụ: điều kiện xét tốt nghiệp";
+  }
+}).catch(() => {});
+
+const run = () => (searchOnly ? search() : ask());
+$("examples").onclick = (e) => { if (e.target.tagName === "BUTTON") { $("q").value = e.target.textContent; run(); } };
+$("form").onsubmit = (e) => { e.preventDefault(); run(); };
+
+function highlight(text, query) {
+  let html = esc(text);
+  const words = [...new Set(query.toLowerCase().split(/\s+/).filter((w) => w.length >= 3))];
+  const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  for (const w of words) {
+    html = html.replace(new RegExp("(" + escapeRe(esc(w)) + ")", "gi"), "<mark>$1</mark>");
+  }
+  return html;
+}
+
+async function search() {
+  const query = $("q").value.trim();
+  if (query.length < 2) return;
+  $("send").disabled = true;
+  const filters = { newest_only: $("newest").checked, doc_type: $("doctype").value || null };
+  $("out").innerHTML = `<div class="status">Đang tìm…</div>`;
+  try {
+    const resp = await fetch("/v1/search", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, top_k: 8, filters }),
+    });
+    const body = await resp.json();
+    if (!resp.ok) throw new Error(body.detail || resp.statusText);
+    $("out").innerHTML = `<div class="status">${body.results.length} kết quả · ${body.took_ms.toFixed(0)} ms</div>` +
+      renderSources(body.results).replace("<h2>Nguồn</h2>", "<h2>Kết quả</h2>");
+    document.querySelectorAll(".src details").forEach((d, i) => {
+      d.open = i < 3;
+      d.querySelector("pre").innerHTML = highlight(body.results[i].text, query);
+    });
+  } catch (err) {
+    $("out").innerHTML = `<div class="err">Lỗi: ${esc(err.message)}</div>`;
+  } finally {
+    $("send").disabled = false;
+  }
+}
 
 function renderAnswer(text) {
   // [1], [1, 2], [1-3] -> links to the source cards
