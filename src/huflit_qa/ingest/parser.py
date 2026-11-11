@@ -247,6 +247,26 @@ def _is_vague(text: str) -> bool:
     return cleaned in VAGUE_LINK_TEXTS or len(cleaned) < 4
 
 
+# Longest first, so "chi tiết tại đây" is removed whole rather than leaving "chi tiết" behind.
+# Iterating the set directly made the result depend on Python's per-process string hashing.
+_VAGUE_TRAILING = [
+    re.compile(re.escape(v) + r"\s*$", re.IGNORECASE)
+    for v in sorted(VAGUE_LINK_TEXTS, key=lambda v: (-len(v), v))
+]
+
+
+def _strip_vague_suffix(text: str) -> str:
+    changed = True
+    while changed:
+        changed = False
+        for pattern in _VAGUE_TRAILING:
+            stripped = pattern.sub("", text).strip()
+            if stripped != text:
+                text, changed = stripped, True
+                break
+    return text
+
+
 def _get_context_text(tag) -> str:
     parents_to_check = [tag.parent]
     if tag.parent:
@@ -256,8 +276,7 @@ def _get_context_text(tag) -> str:
             break
         if parent.name in ("p", "li", "td", "span", "div", "strong", "em"):
             ctx = _clean_text(parent.get_text(separator=" ", strip=True))
-            for vague in VAGUE_LINK_TEXTS:
-                ctx = re.sub(re.escape(vague) + r"\s*$", "", ctx, flags=re.IGNORECASE).strip()
+            ctx = _strip_vague_suffix(ctx)
             ctx = re.sub(r"[<{(\[]+\s*$", "", ctx).strip()
             ctx = re.sub(r"[,;:\.]+$", "", ctx).strip()
             if ctx and len(ctx) > 5:

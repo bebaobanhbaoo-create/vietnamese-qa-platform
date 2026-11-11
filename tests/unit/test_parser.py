@@ -76,3 +76,20 @@ def test_portal_hosted_files_are_attachments_but_navigation_is_not():
     assert _is_boilerplate("https://portal.huflit.edu.vn/News/Type/1016")
     assert _is_boilerplate("https://portal.huflit.edu.vn/Login")
     assert not _is_boilerplate("https://portal.huflit.edu.vn/News/Detail/3208/x")
+
+
+def test_context_does_not_depend_on_string_hashing():
+    import subprocess
+    import sys
+
+    code = (
+        "import sys; sys.path.insert(0, 'tests/unit'); from test_parser import DETAIL_PAGE, META; "
+        "from huflit_qa.ingest.parser import parse_detail_page; "
+        "print(parse_detail_page(DETAIL_PAGE, META)['attachments'][0]['context'])"
+    )
+    outputs = set()
+    for seed in ("0", "1", "2", "3", "4"):
+        env = {**__import__("os").environ, "PYTHONHASHSEED": seed, "PYTHONIOENCODING": "utf-8"}
+        result = subprocess.run([sys.executable, "-c", code], capture_output=True, env=env, check=True)
+        outputs.add(result.stdout.decode("utf-8").strip())
+    assert outputs == {"Quy chế"}
