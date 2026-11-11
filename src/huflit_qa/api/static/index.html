@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hỏi đáp quy chế HUFLIT</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --panel: #ffffff; --text: #1c1917; --muted: #6b6560; --border: #e5e2de;
+    --accent: #1d4ed8; --accent-soft: #e8eefc; --warn: #b45309; --ok: #15803d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171615; --panel: #22201e; --text: #f2f0ed; --muted: #a39e98; --border: #3a3734;
+      --accent: #7aa2ff; --accent-soft: #1f2a44; --warn: #f0b04a; --ok: #4ade80;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; font-size: 14px; }
+  form { display: flex; gap: 8px; }
+  input[type=text] { flex: 1; min-width: 0; font: inherit; padding: 10px 14px; border: 1px solid var(--border);
+                     border-radius: 10px; background: var(--panel); color: var(--text); }
+  button { font: inherit; padding: 10px 18px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+  button:disabled { opacity: .6; cursor: default; }
+  .opts { display: flex; gap: 16px; flex-wrap: wrap; margin: 10px 0 0; font-size: 14px; color: var(--muted); }
+  .examples { margin: 16px 0 0; display: flex; gap: 8px; flex-wrap: wrap; }
+  .examples button { background: var(--accent-soft); color: var(--accent); padding: 6px 12px; font-size: 14px; }
+  .answer { margin-top: 28px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; white-space: pre-wrap; }
+  .answer.refused { border-color: var(--warn); }
+  .cite { display: inline-block; min-width: 1.5em; padding: 0 4px; margin: 0 1px; border-radius: 6px; background: var(--accent-soft);
+          color: var(--accent); font-size: 13px; text-align: center; text-decoration: none; }
+  .status { color: var(--muted); font-size: 13px; margin-top: 8px; }
+  .status .bad { color: var(--warn); } .status .good { color: var(--ok); }
+  h2 { font-size: 16px; margin: 28px 0 10px; }
+  .src { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+  .src.cited { border-color: var(--accent); }
+  .src.flash { box-shadow: 0 0 0 3px var(--accent-soft); }
+  .src .head { display: flex; gap: 8px; align-items: baseline; }
+  .src .n { font-weight: 600; color: var(--accent); }
+  .src .title { font-weight: 600; }
+  .src .meta { color: var(--muted); font-size: 13px; }
+  .src details { margin-top: 6px; font-size: 14px; }
+  .src summary { cursor: pointer; color: var(--muted); }
+  .src pre { white-space: pre-wrap; font: 14px/1.55 system-ui, sans-serif; margin: 6px 0 0; }
+  a { color: var(--accent); }
+  .err { color: var(--warn); margin-top: 16px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Hỏi đáp quy chế HUFLIT</h1>
+  <p class="sub">Trả lời từ quy chế và thông báo trên cổng thông tin sinh viên, kèm trích dẫn nguồn. Kiểm tra lại văn bản gốc trước khi làm thủ tục.</p>
+
+  <form id="form">
+    <input id="q" type="text" placeholder="Ví dụ: Điều kiện xét tốt nghiệp là gì?" autocomplete="off" required minlength="2" maxlength="500">
+    <button id="send" type="submit">Hỏi</button>
+  </form>
+  <div class="opts">
+    <label><input id="newest" type="checkbox"> Chỉ dùng bản quy chế mới nhất</label>
+    <label>Loại văn bản
+      <select id="doctype"><option value="">Tất cả</option><option value="quy_che">Quy chế</option><option value="thong_bao">Thông báo</option></select>
+    </label>
+  </div>
+  <div class="examples" id="examples"></div>
+
+  <div id="out"></div>
+</main>
+<script>
+const EXAMPLES = [
+  "Mỗi học kỳ được đăng ký tối đa bao nhiêu tín chỉ?",
+  "Điều kiện để được xét học bổng khuyến khích học tập?",
+  "Chuẩn đầu ra tiếng Anh khóa 2024 là gì?",
+  "Vắng thi có lý do chính đáng thì có được thi lại không?",
+];
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+$("examples").innerHTML = EXAMPLES.map((e) => `<button type="button">${esc(e)}</button>`).join("");
+$("examples").onclick = (e) => { if (e.target.tagName === "BUTTON") { $("q").value = e.target.textContent; ask(); } };
+$("form").onsubmit = (e) => { e.preventDefault(); ask(); };
+
+function renderAnswer(text) {
+  // [1], [1, 2], [1-3] -> links to the source cards
+  return esc(text).replace(/\[(\d+(?:\s*[,;–-]\s*\d+)*)\]/g, (m, group) =>
+    group.split(/\s*[,;]\s*/).map((n) => `<a class="cite" href="#src-${n.split(/[–-]/)[0].trim()}">${n.trim()}</a>`).join(""));
+}
+
+function renderSources(sources, cited = []) {
+  if (!sources.length) return "";
+  return "<h2>Nguồn</h2>" + sources.map((s, i) => {
+    const n = i + 1;
+    const meta = [s.issued_date && `ban hành ${s.issued_date}`, s.date_posted && `đăng ${s.date_posted}`, s.issuer_unit]
+      .filter(Boolean).join(" · ");
+    return `<div class="src ${cited.includes(n) ? "cited" : ""}" id="src-${n}">
+      <div class="head"><span class="n">[${n}]</span><span class="title">${esc(s.chunk_title || s.doc_title)}</span></div>
+      <div class="meta">${esc(s.doc_title)}${meta ? " · " + esc(meta) : ""} · <a href="${esc(s.source_url)}" target="_blank" rel="noopener">văn bản gốc</a></div>
+      <details><summary>Xem đoạn trích</summary><pre>${esc(s.text)}</pre></details></div>`;
+  }).join("");
+}
+
+async function ask() {
+  const question = $("q").value.trim();
+  if (question.length < 2) return;
+  $("send").disabled = true;
+  const filters = { newest_only: $("newest").checked, doc_type: $("doctype").value || null };
+  $("out").innerHTML = `<div class="answer" id="answer">…</div><div class="status" id="status">Đang tìm văn bản liên quan…</div><div id="sources"></div>`;
+  let sources = [], answer = "";
+  try {
+    const resp = await fetch("/v1/ask/stream", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question, filters }),
+    });
+    if (!resp.ok) throw new Error((await resp.json()).detail || resp.statusText);
+    const reader = resp.body.getReader(), decoder = new TextDecoder();
+    let buffer = "";
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      let idx;
+      while ((idx = buffer.indexOf("\n\n")) >= 0) {
+        const block = buffer.slice(0, idx); buffer = buffer.slice(idx + 2);
+        const event = /^event: (.*)$/m.exec(block)?.[1];
+        const data = JSON.parse(/^data: (.*)$/m.exec(block)?.[1] ?? "null");
+        if (event === "sources") {
+          sources = data; $("sources").innerHTML = renderSources(sources);
+          $("status").textContent = `Đã tìm thấy ${sources.length} đoạn văn bản, đang soạn câu trả lời…`;
+        } else if (event === "token") {
+          answer += data; $("answer").innerHTML = renderAnswer(answer);
+        } else if (event === "done") {
+          $("answer").classList.toggle("refused", data.refused);
+          $("sources").innerHTML = renderSources(sources, data.cited);
+          $("status").innerHTML = data.refused
+            ? '<span class="bad">Không đủ căn cứ trong các văn bản tìm được.</span>'
+            : data.grounded ? '<span class="good">Mọi ý đều có trích dẫn nguồn hợp lệ.</span>'
+            : '<span class="bad">Câu trả lời thiếu trích dẫn hoặc trích dẫn nguồn không tồn tại, hãy kiểm tra lại.</span>';
+        } else if (event === "error") {
+          throw new Error(data);
+        }
+      }
+    }
+  } catch (err) {
+    $("status").innerHTML = `<div class="err">Lỗi: ${esc(err.message)}</div>`;
+  } finally {
+    $("send").disabled = false;
+  }
+}
+
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a.cite");
+  if (!a) return;
+  const card = document.querySelector(a.getAttribute("href"));
+  if (card) { card.classList.add("flash"); setTimeout(() => card.classList.remove("flash"), 1200); }
+});
+</script>
+</body>
+</html>

@@ -24,6 +24,10 @@ dependencies = [
     "qdrant-client==1.19.1",
     # Generation (local LLM through Ollama)
     "httpx==0.28.1",
+    # Serving
+    "fastapi==0.162.4",
+    "uvicorn==0.51.0",
+    "prometheus-client==0.23.1",
     "torch==2.5.1",
     "sentence-transformers==3.4.1",
     "transformers==4.57.6",
@@ -48,6 +52,9 @@ huflit-qa = "huflit_qa.cli:app"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+huflit_qa = ["api/static/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

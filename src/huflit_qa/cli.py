@@ -159,18 +159,35 @@ def ask(
         typer.echo(f"Cảnh báo: trích dẫn không tồn tại {check.invalid}", err=True)
 
 
+@app.command()
+def serve(
+    host: Annotated[str, typer.Option()] = "127.0.0.1",
+    port: Annotated[int, typer.Option()] = 8080,
+    rerank: Annotated[str | None, typer.Option(help="Cross-encoder model to rerank with")] = None,
+) -> None:
+    """Run the HTTP API and the chat page (http://HOST:PORT/, docs at /docs)."""
+    import uvicorn
+
+    from huflit_qa.api.app import create_app
+
+    settings = with_reranker(get_settings(), rerank)
+    uvicorn.run(create_app(settings=settings), host=host, port=port, log_config=None)
+
+
 @app.command("eval-answers")
 def eval_answers(
     model: Annotated[str | None, typer.Option(help="Ollama model")] = None,
     rerank: Annotated[str | None, typer.Option(help="Cross-encoder model to rerank with")] = None,
     split: Annotated[str, typer.Option(help="dev | test | all")] = "dev",
     limit: Annotated[int | None, typer.Option(help="Only the first N queries")] = None,
+    newest_only: Annotated[bool, typer.Option(help="Only the newest version of each regulation")] = False,
     output: Annotated[Path | None, typer.Option(help="Save the report as JSON")] = None,
 ) -> None:
     """Generate answers for labelled queries and score citations and refusals."""
     from huflit_qa.evaluation.answer_eval import format_answer_report, run_answer_eval
     from huflit_qa.generation.llm import OllamaLLM
     from huflit_qa.generation.rag import RAGPipeline
+    from huflit_qa.retrieval.filters import SearchFilters
     from huflit_qa.retrieval.hybrid import HybridRetriever
 
     settings = with_reranker(get_settings(), rerank)
@@ -179,7 +196,12 @@ def eval_answers(
     pipeline = RAGPipeline(HybridRetriever(settings), llm, gen)
     answers_path = output.with_suffix(".answers.jsonl") if output else None
     report = run_answer_eval(
-        settings, pipeline, None if split == "all" else split, limit, answers_path=answers_path
+        settings,
+        pipeline,
+        None if split == "all" else split,
+        limit,
+        answers_path=answers_path,
+        filters=SearchFilters(newest_only=newest_only),
     )
     typer.echo(format_answer_report(report))
     if output:
