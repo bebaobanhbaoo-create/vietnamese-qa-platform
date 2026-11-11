@@ -23,7 +23,8 @@ DAGS = Path(__file__).resolve().parents[2] / "deploy" / "airflow" / "dags"
 def dag():
     bag = DagBag(dag_folder=str(DAGS))
     assert bag.import_errors == {}
-    return bag.get_dag("huflit_weekly_ingest")
+    # bag.dags is in memory; get_dag() would query the metadata database, which CI does not create.
+    return bag.dags.get("huflit_weekly_ingest")
 
 
 def test_schedule_and_limits(dag):
