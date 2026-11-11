@@ -18,3 +18,6 @@ eval/annotation/pool*.json
 .coverage
 data/.cache/
 deploy/static/data/
+data/.backups/
+data/.runs/
+data/reports/

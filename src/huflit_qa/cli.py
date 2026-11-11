@@ -159,6 +159,19 @@ def ask(
         typer.echo(f"Cảnh báo: trích dẫn không tồn tại {check.invalid}", err=True)
 
 
+@app.command("run-step")
+def run_step(
+    step: Annotated[str, typer.Argument(help="Pipeline step, see huflit_qa.orchestration.STEPS")],
+    run_id: Annotated[str, typer.Option(help="Identifier of the pipeline run")] = "manual",
+) -> None:
+    """Run one step of the weekly ingestion pipeline (used by the Airflow DAG); prints a JSON summary."""
+    from huflit_qa.orchestration import run_step as run
+
+    result = run(get_settings(), step, run_id)
+    # Last stdout line = the step summary (Airflow pushes it as an XCom).
+    typer.echo(json.dumps(result, ensure_ascii=False, default=str))
+
+
 @app.command("upload-data")
 def upload_data(
     repo: Annotated[str, typer.Option(help="Dataset repo id")] = "bebaobanhbaoo/huflit-regulations",
