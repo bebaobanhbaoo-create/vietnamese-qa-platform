@@ -4,150 +4,181 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tìm kiếm quy chế HUFLIT</title>
-<meta name="description" content="Tìm kiếm lai (BM25 + embedding, RRF) trên quy chế và thông báo HUFLIT, chạy hoàn toàn trong trình duyệt.">
-<style>
-  :root {
-    --bg: #f7f7f5; --panel: #ffffff; --text: #1c1917; --muted: #6b6560; --border: #e5e2de;
-    --accent: #1d4ed8; --accent-soft: #e8eefc; --warn: #b45309; --mark: #fde68a;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #171615; --panel: #22201e; --text: #f2f0ed; --muted: #a39e98; --border: #3a3734;
-      --accent: #7aa2ff; --accent-soft: #1f2a44; --warn: #f0b04a; --mark: #854d0e;
-    }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
-  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
-  h1 { font-size: 22px; margin: 0 0 4px; }
-  .sub { color: var(--muted); margin: 0 0 16px; font-size: 14px; }
-  .banner { background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; font-size: 14px; margin: 0 0 16px; }
-  form { display: flex; gap: 8px; }
-  input[type=text] { flex: 1; min-width: 0; font: inherit; padding: 10px 14px; border: 1px solid var(--border);
-                     border-radius: 10px; background: var(--panel); color: var(--text); }
-  button { font: inherit; padding: 10px 18px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
-  button:disabled { opacity: .6; cursor: default; }
-  .opts { display: flex; gap: 16px; flex-wrap: wrap; margin: 10px 0 0; font-size: 14px; color: var(--muted); }
-  .examples { margin: 16px 0 0; display: flex; gap: 8px; flex-wrap: wrap; }
-  .examples button { background: var(--accent-soft); color: var(--accent); padding: 6px 12px; font-size: 14px; }
-  .status { color: var(--muted); font-size: 13px; margin-top: 16px; }
-  .src { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-top: 10px; }
-  .src .head { display: flex; gap: 8px; align-items: baseline; }
-  .src .n { font-weight: 600; color: var(--accent); }
-  .src .title { font-weight: 600; }
-  .src .meta { color: var(--muted); font-size: 13px; }
-  .src details { margin-top: 6px; font-size: 14px; }
-  .src summary { cursor: pointer; color: var(--muted); }
-  .src pre { white-space: pre-wrap; font: 14px/1.55 system-ui, sans-serif; margin: 6px 0 0; }
-  mark { background: var(--mark); color: inherit; border-radius: 3px; }
-  a { color: var(--accent); }
-  footer { margin-top: 40px; font-size: 13px; color: var(--muted); }
-</style>
+<meta name="description" content="Tìm kiếm lai BM25 + embedding trên quy chế và thông báo của Trường ĐH Ngoại ngữ – Tin học TP.HCM, chạy hoàn toàn trong trình duyệt.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232a55d4'/%3E%3Cpath d='M7 22a10 10 0 0 1 9 0a10 10 0 0 1 9 0M7 10a10 10 0 0 1 9 0a10 10 0 0 1 9 0M7 10v12M16 10v12M25 10v12' stroke='white' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="app.css">
 </head>
 <body>
-<main>
-  <h1>Tìm kiếm quy chế HUFLIT</h1>
-  <p class="sub">Quy chế và thông báo trên cổng thông tin sinh viên Trường ĐH Ngoại ngữ – Tin học TP.HCM. Kiểm tra văn bản gốc trước khi làm thủ tục.</p>
-  <p class="banner">Chạy hoàn toàn trong trình duyệt: BM25 + embedding đa ngôn ngữ (MiniLM, ONNX), hợp nhất bằng Reciprocal Rank Fusion, trên 1.209 đoạn văn bản. Bản đầy đủ có <b>hỏi đáp kèm trích dẫn</b> bằng LLM chạy local — xem <a href="https://github.com/bebaobanhbaoo-create/vietnamese-qa-platform">GitHub</a>.</p>
+<header class="topbar"><div class="inner">
+  <a class="brand" href="./"><span class="mark" id="brand-icon"></span><span>HUFLIT Regulation Search<small>Quy chế &amp; thông báo sinh viên</small></span></a>
+  <span class="spacer"></span>
+  <a class="nav-link" id="gh" href="https://github.com/bebaobanhbaoo-create/vietnamese-qa-platform" target="_blank" rel="noopener"><span id="gh-icon"></span><span class="label">GitHub</span></a>
+  <button class="icon-btn" id="theme" type="button"></button>
+</div></header>
 
-  <form id="form">
-    <input id="q" type="text" placeholder="Ví dụ: điều kiện xét tốt nghiệp" autocomplete="off" required minlength="2" maxlength="500">
-    <button id="send" type="submit" disabled>Tìm</button>
-  </form>
-  <div class="opts">
-    <label><input id="newest" type="checkbox"> Chỉ dùng bản quy chế mới nhất</label>
-    <label>Loại văn bản
-      <select id="doctype"><option value="">Tất cả</option><option value="quy_che">Quy chế</option><option value="thong_bao">Thông báo</option></select>
+<main class="narrow">
+  <p class="kicker">Hybrid retrieval · chạy trong trình duyệt</p>
+  <h1>Tìm trong quy chế đào tạo, học bổng, chuẩn đầu ra…</h1>
+  <p class="lead">Hỏi bằng tiếng Việt tự nhiên. Kết quả kết hợp tìm theo từ khóa (BM25) và theo ngữ nghĩa (embedding đa ngôn ngữ), luôn kèm văn bản gốc để đối chiếu.</p>
+  <p class="stats" id="stats"></p>
+
+  <form id="form" role="search">
+    <label class="searchbox">
+      <span id="search-icon"></span>
+      <span class="sr-only">Câu hỏi</span>
+      <input id="q" type="search" placeholder="Ví dụ: điều kiện xét tốt nghiệp" autocomplete="off" minlength="2" maxlength="500">
+      <span class="kbd" aria-hidden="true">/</span>
+      <button class="btn" id="send" type="submit" disabled>Tìm</button>
     </label>
+  </form>
+  <div class="toolbar">
+    <div class="chip-group" id="doctype" role="group" aria-label="Loại văn bản">
+      <button type="button" data-value="" aria-pressed="true">Tất cả</button>
+      <button type="button" data-value="quy_che" aria-pressed="false">Quy chế</button>
+      <button type="button" data-value="thong_bao" aria-pressed="false">Thông báo</button>
+    </div>
+    <label class="toggle"><input id="newest" type="checkbox"> Chỉ bản quy chế mới nhất</label>
   </div>
   <div class="examples" id="examples"></div>
-  <div class="status" id="status">Đang tải dữ liệu…</div>
-  <div id="out"></div>
 
-  <footer>Văn bản thuộc về Trường ĐH Ngoại ngữ – Tin học TP.HCM, được dùng cho mục đích nghiên cứu. Mã nguồn: <a href="https://github.com/bebaobanhbaoo-create/vietnamese-qa-platform">vietnamese-qa-platform</a>.</footer>
+  <div class="statusline" id="statusline" aria-live="polite">
+    <span id="status">Đang tải dữ liệu…</span>
+    <span class="progress" id="progress" hidden><span></span></span>
+  </div>
+  <div class="results" id="out"></div>
+
+  <details class="how">
+    <summary>Cách hoạt động</summary>
+    <div class="steps">
+      <div class="step"><b>1. Thu thập</b>Crawl cổng thông tin sinh viên hằng tuần bằng Airflow, có kiểm tra chất lượng dữ liệu.</div>
+      <div class="step"><b>2. Chia đoạn</b>Tách theo Chương / Điều / Khoản, gắn ngày ban hành và cờ phiên bản mới nhất.</div>
+      <div class="step"><b>3. BM25</b>Tìm theo từ khóa, chạy bằng JavaScript (khớp 100% với bản Python).</div>
+      <div class="step"><b>4. Embedding</b>MiniLM đa ngôn ngữ (ONNX) mã hóa câu hỏi ngay trong trình duyệt.</div>
+      <div class="step"><b>5. Hợp nhất</b>Reciprocal Rank Fusion ghép hai danh sách kết quả.</div>
+    </div>
+    <p class="lead" style="font-size:15px;margin-top:14px">Bản đầy đủ (chạy local) còn có reranker, bộ lọc nâng cao và <b>hỏi đáp kèm trích dẫn</b> bằng LLM — xem README trên GitHub.</p>
+  </details>
 </main>
+
+<footer class="site">Văn bản thuộc về Trường ĐH Ngoại ngữ – Tin học TP.HCM, được dùng cho mục đích nghiên cứu; hãy kiểm tra văn bản gốc trước khi làm thủ tục. Mã nguồn MIT.</footer>
+
 <script type="module">
 import { HybridIndex } from "./search.js";
+import { $, ICONS, chipGroup, esc, initTheme, skeletons, slashToFocus, sourceCard } from "./ui.js";
 
 const EXAMPLES = ["Mỗi học kỳ được đăng ký tối đa bao nhiêu tín chỉ?", "Điều kiện xét học bổng khuyến khích học tập",
-                  "Chuẩn đầu ra tiếng Anh khóa 2024", "Vắng thi có lý do chính đáng"];
-const $ = (id) => document.getElementById(id);
-const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+                  "Chuẩn đầu ra tiếng Anh khóa 2024", "Vắng thi có lý do chính đáng", "Hạn chót đóng học phí"];
 
-let index = null, embed = null;
+$("brand-icon").innerHTML = ICONS.book;
+$("gh-icon").innerHTML = ICONS.github;
+$("search-icon").innerHTML = ICONS.search;
+initTheme($("theme"));
+slashToFocus($("q"));
 
-function highlight(text, query) {
-  let html = esc(text);
-  for (const w of new Set(query.toLowerCase().split(/\s+/).filter((w) => w.length >= 3))) {
-    html = html.replace(new RegExp("(" + escapeRe(esc(w)) + ")", "gi"), "<mark>$1</mark>");
-  }
-  return html;
-}
+let index = null, embed = null, modelProgress = 0;
+const doctype = chipGroup($("doctype"), () => run());
+$("newest").onchange = () => run();
+$("examples").innerHTML = EXAMPLES.map((e) => `<button type="button" class="example">${esc(e)}</button>`).join("");
+$("examples").onclick = (e) => { if (e.target.matches(".example")) { $("q").value = e.target.textContent; run(); } };
+$("form").onsubmit = (e) => { e.preventDefault(); run(); };
 
-function render(results, query, tookMs) {
-  const mode = embed ? "BM25 + embedding" : "BM25 (model embedding đang tải)";
-  $("status").textContent = `${results.length} kết quả · ${tookMs.toFixed(0)} ms · ${mode}`;
-  $("out").innerHTML = results.map((s, i) => {
-    const meta = [s.issued_date && `ban hành ${s.issued_date}`, s.date_posted && `đăng ${s.date_posted}`, s.issuer_unit].filter(Boolean).join(" · ");
-    return `<div class="src"><div class="head"><span class="n">[${i + 1}]</span><span class="title">${esc(s.chunk_title || s.doc_title)}</span></div>
-      <div class="meta">${esc(s.doc_title)}${meta ? " · " + esc(meta) : ""} · <a href="${esc(s.source_url)}" target="_blank" rel="noopener">văn bản gốc</a></div>
-      <details ${i < 3 ? "open" : ""}><summary>Đoạn trích</summary><pre>${highlight(s.text, query)}</pre></details></div>`;
-  }).join("");
+function setStatus(text, progress = null) {
+  $("status").textContent = text;
+  $("progress").hidden = progress === null;
+  if (progress !== null) $("progress").firstElementChild.style.width = `${Math.round(progress)}%`;
 }
 
 async function queryVector(query) {
   if (!embed) return null;
   const q = index.meta.lowercase_query ? query.trim().toLowerCase() : query.trim();
-  const out = await embed(q, { pooling: "mean", normalize: true });
-  return out.data;
+  return (await embed(q, { pooling: "mean", normalize: true })).data;
 }
 
-// Exposed for the parity check against the Python retriever.
-window.hybridSearch = async (query, k = 10, filters = {}) =>
-  index.search(query, await queryVector(query), k, filters).map((r) => r.chunk_id);
-window.searchReady = () => Boolean(index && embed);
-window.searchParts = async (query, k = 10) => {
-  const vec = await queryVector(query);
-  const ids = (rows) => rows.map((i) => index.chunks[i].chunk_id);
-  return {
-    bm25: ids(index.searchBM25(query, k)),
-    dense: ids(index.searchDense(vec, k)),
-    hybrid: index.search(query, vec, k, {}).map((r) => r.chunk_id),
-  };
-};
+// Shareable searches: ?q=...&type=quy_che&newest=1
+function syncUrl(query) {
+  const params = new URLSearchParams();
+  if (query) params.set("q", query);
+  if (doctype.value) params.set("type", doctype.value);
+  if ($("newest").checked) params.set("newest", "1");
+  history.replaceState(null, "", params.toString() ? `?${params}` : location.pathname);
+}
 
 async function run() {
   const query = $("q").value.trim();
+  syncUrl(query);
   if (query.length < 2 || !index) return;
+  $("out").innerHTML = skeletons(3);
   const start = performance.now();
-  const filters = { newest_only: $("newest").checked, doc_type: $("doctype").value || null };
+  const filters = { newest_only: $("newest").checked, doc_type: doctype.value || null };
   const results = index.search(query, await queryVector(query), 8, filters);
-  render(results, query, performance.now() - start);
+  const ms = performance.now() - start;
+  const mode = embed ? "BM25 + embedding" : "BM25 (model embedding đang tải)";
+  setStatus(`${results.length} kết quả · ${ms.toFixed(0)} ms · ${mode}`, embed ? null : modelProgress);
+  $("out").innerHTML = results.length
+    ? results.map((s, i) => sourceCard(s, { open: i === 0, query })).join("")
+    : `<div class="empty">Không tìm thấy đoạn văn bản nào. Thử bỏ bộ lọc hoặc dùng từ khác.</div>`;
 }
 
-$("examples").innerHTML = EXAMPLES.map((e) => `<button type="button">${esc(e)}</button>`).join("");
-$("examples").onclick = (e) => { if (e.target.tagName === "BUTTON") { $("q").value = e.target.textContent; run(); } };
-$("form").onsubmit = (e) => { e.preventDefault(); run(); };
-
-const [meta, chunks, buf] = await Promise.all([
-  fetch("data/meta.json").then((r) => r.json()),
-  fetch("data/chunks.json").then((r) => r.json()),
-  fetch("data/vectors.f32").then((r) => r.arrayBuffer()),
-]);
-index = new HybridIndex(meta, chunks, new Float32Array(buf));
-$("send").disabled = false;
-$("status").textContent = "Sẵn sàng tìm bằng BM25; đang tải model embedding (~120 MB, chỉ lần đầu)…";
+// Restore a shared search from the URL.
+const params = new URLSearchParams(location.search);
+$("q").value = params.get("q") || "";
+doctype.value = params.get("type") || "";
+$("newest").checked = params.get("newest") === "1";
 
 try {
-  const { pipeline } = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.0");
-  embed = await pipeline("feature-extraction", meta.model, { dtype: "q8" });
-  $("status").textContent = "Sẵn sàng: BM25 + embedding.";
-  if ($("q").value.trim()) run();
+  const [meta, chunks, buf] = await Promise.all([
+    fetch("data/meta.json").then((r) => r.json()),
+    fetch("data/chunks.json").then((r) => r.json()),
+    fetch("data/vectors.f32").then((r) => r.arrayBuffer()),
+  ]);
+  index = new HybridIndex(meta, chunks, new Float32Array(buf));
+  const regs = chunks.filter((c) => c.doc_type === "quy_che").length;
+  const newest = chunks.reduce((m, c) => (c.date_posted > m ? c.date_posted : m), "");
+  $("stats").innerHTML = `<span><b>${chunks.length.toLocaleString("vi-VN")}</b> đoạn văn bản</span>
+    <span><b>${regs.toLocaleString("vi-VN")}</b> đoạn quy chế</span>
+    <span>Mới nhất: <b>${newest.split("-").reverse().join("/")}</b></span>`;
+  $("send").disabled = false;
+  setStatus("Sẵn sàng tìm bằng BM25 · đang tải model embedding (~120 MB, chỉ lần đầu)…", 0);
+  if ($("q").value) run();
 } catch (err) {
   console.error(err);
-  $("status").textContent = "Không tải được model embedding; đang tìm bằng BM25.";
+  $("out").innerHTML = `<div class="alert err">Không tải được dữ liệu tìm kiếm: ${esc(err.message)}</div>`;
+  setStatus("");
 }
+
+if (index) {
+  try {
+    const { pipeline } = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.0");
+    const loaded = {};
+    embed = await pipeline("feature-extraction", index.meta.model, {
+      dtype: "q8",
+      progress_callback: (p) => {
+        if (p.status !== "progress" || !p.total) return;
+        loaded[p.file] = [p.loaded, p.total];
+        const [done, total] = Object.values(loaded).reduce(([a, b], [c, d]) => [a + c, b + d], [0, 0]);
+        modelProgress = (100 * done) / total;
+        if (!$("out").children.length) setStatus("Đang tải model embedding (chỉ lần đầu)…", modelProgress);
+        else $("progress").firstElementChild.style.width = `${Math.round(modelProgress)}%`;
+      },
+    });
+    setStatus("Sẵn sàng · BM25 + embedding");
+    if ($("q").value) run();
+  } catch (err) {
+    console.error(err);
+    setStatus("Không tải được model embedding; đang tìm bằng BM25.");
+  }
+}
+
+// Exposed for the parity check against the Python retriever (docs/DEMO.md).
+window.searchReady = () => Boolean(index && embed);
+window.hybridSearch = async (query, k = 10, filters = {}) =>
+  index.search(query, await queryVector(query), k, filters).map((r) => r.chunk_id);
+window.searchParts = async (query, k = 10) => {
+  const vec = await queryVector(query);
+  const ids = (rows) => rows.map((i) => index.chunks[i].chunk_id);
+  return { bm25: ids(index.searchBM25(query, k)), dense: ids(index.searchDense(vec, k)),
+           hybrid: index.search(query, vec, k, {}).map((r) => r.chunk_id) };
+};
 </script>
 </body>
 </html>

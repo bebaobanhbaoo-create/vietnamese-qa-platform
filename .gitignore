@@ -21,3 +21,5 @@ deploy/static/data/
 data/.backups/
 data/.runs/
 data/reports/
+deploy/static/app.css
+deploy/static/ui.js

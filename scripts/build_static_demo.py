@@ -10,15 +10,18 @@ Needs only numpy and faiss, not torch.
 
 import argparse
 import json
+import shutil
 from pathlib import Path
 
 import faiss
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
+SHARED_DIR = ROOT / "src" / "huflit_qa" / "api" / "static"
+SHARED_ASSETS = ("app.css", "ui.js")
 FIELDS = (
     "chunk_id", "doc_title", "chunk_title", "doc_type", "source_url",
-    "date_posted", "issued_date", "issuer_unit", "newest_in_group", "text",
+    "date_posted", "issued_date", "issuer_unit", "newest_in_group", "on_portal", "text",
 )  # fmt: skip
 # Browser builds of the embedding models (transformers.js / ONNX).
 BROWSER_MODELS = {"paraphrase-multilingual-MiniLM-L12-v2": "Xenova/paraphrase-multilingual-MiniLM-L12-v2"}
@@ -55,6 +58,9 @@ def build(index_dir: Path, out_dir: Path) -> dict:
         },
     }
     (out_dir / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+    # The page shares its stylesheet and UI helpers with the API's chat page.
+    for name in SHARED_ASSETS:
+        shutil.copy2(SHARED_DIR / name, out_dir.parent / name)
     return meta
 
 
