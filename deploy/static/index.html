@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tìm kiếm quy chế HUFLIT</title>
+<meta name="description" content="Tìm kiếm lai (BM25 + embedding, RRF) trên quy chế và thông báo HUFLIT, chạy hoàn toàn trong trình duyệt.">
+<style>
+  :root {
+    --bg: #f7f7f5; --panel: #ffffff; --text: #1c1917; --muted: #6b6560; --border: #e5e2de;
+    --accent: #1d4ed8; --accent-soft: #e8eefc; --warn: #b45309; --mark: #fde68a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171615; --panel: #22201e; --text: #f2f0ed; --muted: #a39e98; --border: #3a3734;
+      --accent: #7aa2ff; --accent-soft: #1f2a44; --warn: #f0b04a; --mark: #854d0e;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 16px; font-size: 14px; }
+  .banner { background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; font-size: 14px; margin: 0 0 16px; }
+  form { display: flex; gap: 8px; }
+  input[type=text] { flex: 1; min-width: 0; font: inherit; padding: 10px 14px; border: 1px solid var(--border);
+                     border-radius: 10px; background: var(--panel); color: var(--text); }
+  button { font: inherit; padding: 10px 18px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+  button:disabled { opacity: .6; cursor: default; }
+  .opts { display: flex; gap: 16px; flex-wrap: wrap; margin: 10px 0 0; font-size: 14px; color: var(--muted); }
+  .examples { margin: 16px 0 0; display: flex; gap: 8px; flex-wrap: wrap; }
+  .examples button { background: var(--accent-soft); color: var(--accent); padding: 6px 12px; font-size: 14px; }
+  .status { color: var(--muted); font-size: 13px; margin-top: 16px; }
+  .src { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-top: 10px; }
+  .src .head { display: flex; gap: 8px; align-items: baseline; }
+  .src .n { font-weight: 600; color: var(--accent); }
+  .src .title { font-weight: 600; }
+  .src .meta { color: var(--muted); font-size: 13px; }
+  .src details { margin-top: 6px; font-size: 14px; }
+  .src summary { cursor: pointer; color: var(--muted); }
+  .src pre { white-space: pre-wrap; font: 14px/1.55 system-ui, sans-serif; margin: 6px 0 0; }
+  mark { background: var(--mark); color: inherit; border-radius: 3px; }
+  a { color: var(--accent); }
+  footer { margin-top: 40px; font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tìm kiếm quy chế HUFLIT</h1>
+  <p class="sub">Quy chế và thông báo trên cổng thông tin sinh viên Trường ĐH Ngoại ngữ – Tin học TP.HCM. Kiểm tra văn bản gốc trước khi làm thủ tục.</p>
+  <p class="banner">Chạy hoàn toàn trong trình duyệt: BM25 + embedding đa ngôn ngữ (MiniLM, ONNX), hợp nhất bằng Reciprocal Rank Fusion, trên 1.209 đoạn văn bản. Bản đầy đủ có <b>hỏi đáp kèm trích dẫn</b> bằng LLM chạy local — xem <a href="https://github.com/bebaobanhbaoo-create/vietnamese-qa-platform">GitHub</a>.</p>
+
+  <form id="form">
+    <input id="q" type="text" placeholder="Ví dụ: điều kiện xét tốt nghiệp" autocomplete="off" required minlength="2" maxlength="500">
+    <button id="send" type="submit" disabled>Tìm</button>
+  </form>
+  <div class="opts">
+    <label><input id="newest" type="checkbox"> Chỉ dùng bản quy chế mới nhất</label>
+    <label>Loại văn bản
+      <select id="doctype"><option value="">Tất cả</option><option value="quy_che">Quy chế</option><option value="thong_bao">Thông báo</option></select>
+    </label>
+  </div>
+  <div class="examples" id="examples"></div>
+  <div class="status" id="status">Đang tải dữ liệu…</div>
+  <div id="out"></div>
+
+  <footer>Văn bản thuộc về Trường ĐH Ngoại ngữ – Tin học TP.HCM, được dùng cho mục đích nghiên cứu. Mã nguồn: <a href="https://github.com/bebaobanhbaoo-create/vietnamese-qa-platform">vietnamese-qa-platform</a>.</footer>
+</main>
+<script type="module">
+import { HybridIndex } from "./search.js";
+
+const EXAMPLES = ["Mỗi học kỳ được đăng ký tối đa bao nhiêu tín chỉ?", "Điều kiện xét học bổng khuyến khích học tập",
+                  "Chuẩn đầu ra tiếng Anh khóa 2024", "Vắng thi có lý do chính đáng"];
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+let index = null, embed = null;
+
+function highlight(text, query) {
+  let html = esc(text);
+  for (const w of new Set(query.toLowerCase().split(/\s+/).filter((w) => w.length >= 3))) {
+    html = html.replace(new RegExp("(" + escapeRe(esc(w)) + ")", "gi"), "<mark>$1</mark>");
+  }
+  return html;
+}
+
+function render(results, query, tookMs) {
+  const mode = embed ? "BM25 + embedding" : "BM25 (model embedding đang tải)";
+  $("status").textContent = `${results.length} kết quả · ${tookMs.toFixed(0)} ms · ${mode}`;
+  $("out").innerHTML = results.map((s, i) => {
+    const meta = [s.issued_date && `ban hành ${s.issued_date}`, s.date_posted && `đăng ${s.date_posted}`, s.issuer_unit].filter(Boolean).join(" · ");
+    return `<div class="src"><div class="head"><span class="n">[${i + 1}]</span><span class="title">${esc(s.chunk_title || s.doc_title)}</span></div>
+      <div class="meta">${esc(s.doc_title)}${meta ? " · " + esc(meta) : ""} · <a href="${esc(s.source_url)}" target="_blank" rel="noopener">văn bản gốc</a></div>
+      <details ${i < 3 ? "open" : ""}><summary>Đoạn trích</summary><pre>${highlight(s.text, query)}</pre></details></div>`;
+  }).join("");
+}
+
+async function queryVector(query) {
+  if (!embed) return null;
+  const q = index.meta.lowercase_query ? query.trim().toLowerCase() : query.trim();
+  const out = await embed(q, { pooling: "mean", normalize: true });
+  return out.data;
+}
+
+// Exposed for the parity check against the Python retriever.
+window.hybridSearch = async (query, k = 10, filters = {}) =>
+  index.search(query, await queryVector(query), k, filters).map((r) => r.chunk_id);
+window.searchReady = () => Boolean(index && embed);
+window.searchParts = async (query, k = 10) => {
+  const vec = await queryVector(query);
+  const ids = (rows) => rows.map((i) => index.chunks[i].chunk_id);
+  return {
+    bm25: ids(index.searchBM25(query, k)),
+    dense: ids(index.searchDense(vec, k)),
+    hybrid: index.search(query, vec, k, {}).map((r) => r.chunk_id),
+  };
+};
+
+async function run() {
+  const query = $("q").value.trim();
+  if (query.length < 2 || !index) return;
+  const start = performance.now();
+  const filters = { newest_only: $("newest").checked, doc_type: $("doctype").value || null };
+  const results = index.search(query, await queryVector(query), 8, filters);
+  render(results, query, performance.now() - start);
+}
+
+$("examples").innerHTML = EXAMPLES.map((e) => `<button type="button">${esc(e)}</button>`).join("");
+$("examples").onclick = (e) => { if (e.target.tagName === "BUTTON") { $("q").value = e.target.textContent; run(); } };
+$("form").onsubmit = (e) => { e.preventDefault(); run(); };
+
+const [meta, chunks, buf] = await Promise.all([
+  fetch("data/meta.json").then((r) => r.json()),
+  fetch("data/chunks.json").then((r) => r.json()),
+  fetch("data/vectors.f32").then((r) => r.arrayBuffer()),
+]);
+index = new HybridIndex(meta, chunks, new Float32Array(buf));
+$("send").disabled = false;
+$("status").textContent = "Sẵn sàng tìm bằng BM25; đang tải model embedding (~120 MB, chỉ lần đầu)…";
+
+try {
+  const { pipeline } = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.0");
+  embed = await pipeline("feature-extraction", meta.model, { dtype: "q8" });
+  $("status").textContent = "Sẵn sàng: BM25 + embedding.";
+  if ($("q").value.trim()) run();
+} catch (err) {
+  console.error(err);
+  $("status").textContent = "Không tải được model embedding; đang tìm bằng BM25.";
+}
+</script>
+</body>
+</html>
