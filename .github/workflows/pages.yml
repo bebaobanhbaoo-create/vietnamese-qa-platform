@@ -1,0 +1,44 @@
+name: Demo (GitHub Pages)
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/index/**"
+      - "deploy/static/**"
+      - "scripts/build_static_demo.py"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      # Exporting vectors from the shipped FAISS index needs no model, only numpy and faiss.
+      - run: pip install "numpy==2.3.5" "faiss-cpu==1.10.0"
+      - run: python scripts/build_static_demo.py
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: deploy/static
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
