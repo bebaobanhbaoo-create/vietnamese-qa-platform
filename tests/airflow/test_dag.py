@@ -14,7 +14,10 @@ pytest.importorskip("airflow")
 
 import itertools
 
-from airflow.models.dagbag import DagBag
+try:
+    from airflow.dag_processing.dagbag import DagBag
+except ImportError:  # Airflow 2
+    from airflow.models.dagbag import DagBag
 
 DAGS = Path(__file__).resolve().parents[2] / "deploy" / "airflow" / "dags"
 
@@ -29,7 +32,9 @@ def dag():
 
 def test_schedule_and_limits(dag):
     assert dag is not None
-    assert dag.timetable.summary == "0 2 * * 1"
+    # The SDK timetable exposes `expression`; the core one keeps it in `_expression`.
+    timetable = dag.timetable
+    assert (getattr(timetable, "expression", None) or getattr(timetable, "_expression", None)) == "0 2 * * 1"
     assert dag.catchup is False and dag.max_active_runs == 1
 
 
