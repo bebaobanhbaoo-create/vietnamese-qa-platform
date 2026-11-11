@@ -61,6 +61,7 @@ class Health(BaseModel):
 
 class Readiness(BaseModel):
     ready: bool
+    mode: str  # "rag" (search + answers) or "search" (generation disabled)
     index: dict
     llm_model: str
     llm_available: bool

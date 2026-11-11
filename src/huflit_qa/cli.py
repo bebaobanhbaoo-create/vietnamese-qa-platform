@@ -159,6 +159,30 @@ def ask(
         typer.echo(f"Cảnh báo: trích dẫn không tồn tại {check.invalid}", err=True)
 
 
+@app.command("upload-data")
+def upload_data(
+    repo: Annotated[str, typer.Option(help="Dataset repo id")] = "bebaobanhbaoo/huflit-regulations",
+    public: Annotated[bool, typer.Option(help="Create the dataset as public")] = False,
+) -> None:
+    """Upload data/ (raw, processed, attachments, index) to a Hugging Face dataset."""
+    from huflit_qa.hub import upload_data as run
+
+    settings = get_settings()
+    url = run(settings.data_dir, repo, private=not public, card=settings.root_dir / "docs" / "DATA_CARD.md")
+    logger.info("Uploaded -> %s", url)
+
+
+@app.command("download-data")
+def download_data(
+    repo: Annotated[str, typer.Option(help="Dataset repo id")] = "bebaobanhbaoo/huflit-regulations",
+) -> None:
+    """Download the corpus and the shipped index from Hugging Face into data/."""
+    from huflit_qa.hub import download_data as run
+
+    path = run(get_settings().data_dir, repo)
+    logger.info("Downloaded -> %s", path)
+
+
 @app.command()
 def serve(
     host: Annotated[str, typer.Option()] = "127.0.0.1",

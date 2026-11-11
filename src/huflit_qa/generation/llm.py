@@ -122,6 +122,23 @@ class OllamaLLM:
 
 
 @dataclass
+class DisabledLLM:
+    """Stand-in when generation is switched off: the API answers search requests only."""
+
+    model: str = "disabled"
+    reason: str = "Answer generation is disabled on this deployment (search only)."
+
+    def available(self) -> tuple[bool, str | None]:
+        return False, self.reason
+
+    def complete(self, messages: list[Message]) -> Completion:
+        raise LLMUnavailableError(self.reason)
+
+    def stream(self, messages: list[Message]) -> Iterator[str]:
+        raise LLMUnavailableError(self.reason)
+
+
+@dataclass
 class FakeLLM:
     """Returns canned answers; records the prompts it was given."""
 

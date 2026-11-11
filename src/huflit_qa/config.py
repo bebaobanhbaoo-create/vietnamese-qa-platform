@@ -39,6 +39,8 @@ class Bm25Settings(BaseModel):
 class GenerationSettings(BaseModel):
     """Answer generation with a local model served by Ollama (https://ollama.com)."""
 
+    # False runs the API in search-only mode (e.g. a public demo without a GPU).
+    enabled: bool = True
     ollama_url: str = "http://localhost:11434"
     model: str = "qwen2.5:7b-instruct"
     temperature: float = 0.1

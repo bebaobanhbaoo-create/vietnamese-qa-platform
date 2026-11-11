@@ -16,3 +16,5 @@ data/experiments/
 eval/annotation/pool*.json
 .claude/
 .coverage
+data/.cache/
+deploy/static/data/
