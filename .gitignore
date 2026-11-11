@@ -15,3 +15,4 @@ eval/annotation/labels*.json
 data/experiments/
 eval/annotation/pool*.json
 .claude/
+.coverage
