@@ -285,10 +285,15 @@ def _is_boilerplate(url: str) -> bool:
     netloc = parsed.netloc.lower()
     path = parsed.path.lower()
     if not netloc or netloc == "portal.huflit.edu.vn":
-        boilerplate_paths = ["/", "/login", "/news/type/", "/public/tracuu", "/content/"]
-        for bp in boilerplate_paths:
-            if path.startswith(bp):
-                return True
+        # Files hosted on the portal itself are attachments, wherever they live.
+        if any(path.endswith(ext) for ext in FILE_EXTENSIONS):
+            return False
+        if path in ("", "/"):
+            return True
+        # "/" used to be a prefix here, which matched every path and dropped portal-hosted files.
+        boilerplate_paths = ["/login", "/news/type/", "/public/tracuu", "/content/"]
+        if any(path.startswith(bp) for bp in boilerplate_paths):
+            return True
         return not path.startswith("/news/detail/")
     return any(netloc == excluded or netloc.endswith("." + excluded) for excluded in EXCLUDED_DOMAINS)
 
