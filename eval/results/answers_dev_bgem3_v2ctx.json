@@ -1,0 +1,47 @@
+{
+  "split": "dev",
+  "model": "qwen2.5:7b-instruct",
+  "retriever": {
+    "created_at": "2026-10-19T13:42:21+00:00",
+    "package_version": "0.2.0",
+    "source_digest": "b0f34585676c6a01",
+    "num_chunks": 1702,
+    "chunking": {
+      "strategy": "v2",
+      "size": 400,
+      "overlap": 0,
+      "min_size": 100,
+      "max_words": 200,
+      "min_words": 40,
+      "context_prefix": true
+    },
+    "bm25": {
+      "tokenizer": "pyvi"
+    },
+    "embedding": {
+      "model": "BAAI/bge-m3",
+      "max_seq_length": 512,
+      "batch_size": 32,
+      "lowercase_query": false,
+      "dim": 1024
+    },
+    "index": {
+      "vector_store": "faiss"
+    }
+  },
+  "rerank": null,
+  "filters": {},
+  "metrics": {
+    "num_queries": 30,
+    "num_answerable": 30,
+    "num_unanswerable": 0,
+    "grounded": 1.0,
+    "context_hit": 0.8333333333333334,
+    "supported": 0.6,
+    "citation_precision": 0.4966666666666667,
+    "false_refusal": 0.0,
+    "correct_refusal": null,
+    "generation_ms_p50": 7712.048700002924,
+    "generation_ms_p95": 19021.278960000556
+  }
+}

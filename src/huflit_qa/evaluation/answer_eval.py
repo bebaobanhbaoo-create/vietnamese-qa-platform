@@ -20,6 +20,7 @@ from huflit_qa.config import Settings
 from huflit_qa.evaluation.projection import build_projection, load_units
 from huflit_qa.evaluation.testset import load_testset
 from huflit_qa.generation.rag import RAGPipeline
+from huflit_qa.retrieval.filters import SearchFilters
 
 
 def select_for_answers(queries: list[dict], split: str | None) -> list[dict]:
@@ -57,6 +58,7 @@ def run_answer_eval(
     split: str | None = None,
     limit: int | None = None,
     answers_path: Path | None = None,
+    filters: SearchFilters | None = None,
 ) -> dict:
     queries = select_for_answers(load_testset(settings.testset_path), split)[:limit]
     projection = build_projection(
@@ -65,7 +67,7 @@ def run_answer_eval(
 
     records = []
     for q in queries:
-        result = pipeline.answer(q["query"])
+        result = pipeline.answer(q["query"], filters)
         relevant = set(q["relevant_chunk_ids"])
 
         def is_relevant(chunk_id: str, relevant: set[str] = relevant) -> bool:
@@ -104,6 +106,7 @@ def run_answer_eval(
         "model": pipeline.llm.model,
         "retriever": pipeline.retriever.manifest,
         "rerank": pipeline.retriever.rerank_cfg.model if pipeline.retriever.reranker else None,
+        "filters": (filters or SearchFilters()).model_dump(exclude_defaults=True),
         "metrics": score_answers(records),
     }
 
