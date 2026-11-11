@@ -19,7 +19,7 @@ flowchart LR
 | `extract_pdf` | Writes `.txt` next to new PDFs; never overwrites hand-corrected text |
 | `process` | Rebuilds the flat records |
 | `quality_gate` | Fails on duplicate ids, missing fields, malformed dates, > 10% fetch errors, > 25% empty records, or a document type shrinking by > 5% |
-| `build_index` | Re-chunks and rebuilds BM25 + FAISS with the manifest |
+| `build_index` | Re-chunks, rebuilds BM25 and syncs Qdrant: only new or changed chunks are embedded, metadata-only changes rewrite the payload |
 | `eval_regression` | Fails if hybrid nDCG@10 on the labelled queries drops > 0.05 below `eval/results/baseline.json` |
 | `publish` | Uploads the corpus to the private Hugging Face dataset when `HF_TOKEN` is set |
 | `report` | Writes `data/reports/ingest_<run_id>.json` with every step's summary |

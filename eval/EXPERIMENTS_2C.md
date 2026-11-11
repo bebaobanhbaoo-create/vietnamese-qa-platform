@@ -44,3 +44,16 @@ huflit-qa query "lịch thi" --doc-type thong_bao --issuer "Phòng Khảo thí" 
 | One chunk's text changed | 1 chunk embedded |
 
 Qdrant is not faster than exact FAISS at this size. It is used because it filters inside the vector search and updates incrementally when the crawler adds documents. bge-m3 sparse vectors in Qdrant (one-store hybrid) are not implemented; BM25 stays separate.
+
+## Qdrant as the only store
+
+FAISS was then removed. The shipped index and every experiment index were moved into embedded Qdrant by copying the FAISS vectors (no re-embedding); a Qdrant server (Docker Compose) is seeded from that folder with `huflit-qa push-vectors`, which writes only changed points. Checked on the shipped index (MiniLM, 1,209 chunks):
+
+| Check | Result |
+|---|---|
+| Vectors exported for the browser demo | byte-identical to the FAISS export |
+| Dense top-20 on the 159 test queries | score at every rank identical on 159/159; order differs on 21/159, always between exact ties |
+| Labelled queries (50), BM25 / Dense / Hybrid nDCG@10 | 0.485 / 0.490 / 0.621 → 0.485 / 0.490 / 0.618 |
+| Vector search alone, p50 (after query encoding) | FAISS 0.08 ms, embedded Qdrant 2.5–3.1 ms |
+
+The ties are the same passage repeated in two versions of a regulation (e.g. 3208_3 and 3208_4) or in two copies of a notice. FAISS ordered them arbitrarily; the store now puts the newest version first, then the most recent date. Breaking ties by chunk id instead gave Hybrid nDCG@10 0.614: the labels were pooled from FAISS rankings and sit on whichever copy FAISS showed. The server path (push, filters, search) runs against a real Qdrant container in CI.
