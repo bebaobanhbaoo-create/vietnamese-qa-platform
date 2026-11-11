@@ -4,6 +4,8 @@
 
 Ask a question in Vietnamese about the academic regulations and announcements of HUFLIT (Ho Chi Minh City University of Foreign Languages – Information Technology); get an answer that cites the regulation articles it comes from, or an explicit "not found" when the sources do not say.
 
+**[Live search demo](https://bebaobanhbaoo-create.github.io/vietnamese-qa-platform/)** — hybrid search running entirely in the browser. Cited answers need a local LLM; the recording below is from the full pipeline.
+
 ![Asking for the credit limit per semester: sources appear first, then a streamed answer citing Điều 9 of the 2021 regulation](docs/demo.gif)
 
 - **Data:** 434 portal pages and their attachments (PDF, scans), crawled, cleaned and split into 1,209 article-level passages; regulation versions dated from their headers.
@@ -66,6 +68,7 @@ Two findings drive the next step. First, the original labels miss relevant passa
 | Labels on frozen units, projected onto any chunking | Re-chunking would otherwise invalidate every label; all configurations are scored against the same relevant set |
 | Pooled annotation from several systems | Labelling only what one system returns biases the test set towards it |
 | Paired bootstrap on per-query nDCG | 30 dev queries are too few to read differences of a few points without an interval |
+| Public demo as a static page | Free hosts no longer run Python containers; BM25 is ported to JavaScript (identical rankings on all 159 test queries) and queries are embedded in the browser with the ONNX build of the same model. 8-bit weights cost 0.014 nDCG@10 (0.621 → 0.607) for a 4× smaller download ([details](docs/DEMO.md)) |
 | Local LLM, fixed refusal sentence, citation check | Runs offline on a 6 GB laptop GPU; refusals and citation errors are detectable without a judge model |
 
 ## Quickstart
@@ -115,7 +118,7 @@ docker compose up -d                                         # API + Ollama (GPU
 docker compose exec ollama ollama pull qwen2.5:7b-instruct   # once, ~4.7 GB
 ```
 
-The API image is CPU-only (PyTorch CPU wheels), runs as a non-root user, ships the prebuilt index and the embedding model so it starts offline, and has a health check. Tagging `v*` publishes it to GitHub Container Registry. `scripts/deploy_space.py` deploys the search-only demo to a Hugging Face Space.
+The API image is CPU-only (PyTorch CPU wheels), runs as a non-root user, ships the prebuilt index and the embedding model so it starts offline, and has a health check. Tagging `v*` publishes it to GitHub Container Registry. The static search demo is rebuilt and published to GitHub Pages when the index changes; `scripts/deploy_space.py` can deploy the Docker image to a Hugging Face Space (needs a PRO plan).
 
 ## Data
 
