@@ -82,10 +82,26 @@ def sync() -> None:
 
 @app.command()
 def index() -> None:
-    """Step 3: chunk records and build the BM25 + FAISS indexes."""
+    """Step 3: chunk records, build BM25 and sync the vectors into the embedded Qdrant store."""
     from huflit_qa.pipeline import build_index
 
     build_index(get_settings())
+
+
+@app.command("push-vectors")
+def push_vectors() -> None:
+    """Mirror the index's embedded Qdrant store to the server at HUFLIT_INDEX__QDRANT_URL.
+
+    Incremental and idempotent: only changed points are written, so it can run on every start.
+    """
+    from huflit_qa.indexing.stores import QdrantStore
+
+    settings = get_settings()
+    if not settings.index.qdrant_url:
+        raise typer.BadParameter("Set HUFLIT_INDEX__QDRANT_URL to the Qdrant server")
+    server = QdrantStore.from_settings(settings)
+    server.wait_ready()
+    server.copy_from(QdrantStore(path=settings.qdrant_path))
 
 
 @app.command()

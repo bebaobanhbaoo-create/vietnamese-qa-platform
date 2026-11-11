@@ -9,7 +9,7 @@ Ask a question in Vietnamese about the academic regulations and announcements of
 ![Asking for the credit limit per semester: sources appear first, then a streamed answer citing Điều 9 of the 2021 regulation](docs/demo.gif)
 
 - **Data:** 434 portal pages and their attachments (PDF, scans), crawled, cleaned and split into 1,209 article-level passages; regulation versions dated from their headers.
-- **Retrieval:** BM25 + multilingual embeddings fused with Reciprocal Rank Fusion, optional cross-encoder reranking, metadata filters (document type, issuing office, year, newest version), FAISS or Qdrant with incremental updates.
+- **Retrieval:** BM25 + multilingual embeddings fused with Reciprocal Rank Fusion, optional cross-encoder reranking, metadata filters (document type, issuing office, year, newest version) applied inside the vector search, vectors in Qdrant (embedded, or a server in Docker Compose) updated incrementally.
 - **Answers:** a local LLM (Qwen2.5-7B through Ollama) answering only from numbered sources, with `[n]` citations checked automatically.
 - **Evaluation:** pooled relevance labels, chunking-independent scoring, paired bootstrap confidence intervals, answer-level grounding and refusal metrics.
 - **Data pipeline:** weekly Airflow DAG with incremental crawling, attachment download, a data-quality gate, evaluation regression check, automatic rollback and soft deletes ([docs/PIPELINE.md](docs/PIPELINE.md)).
@@ -25,7 +25,7 @@ flowchart LR
     raw -->|process| records[516 flat records]
     records -->|"chunk by Chương / Điều / Khoản"| chunks[chunks + metadata]
     chunks --> bm25[BM25]
-    chunks --> dense["dense index<br/>FAISS or Qdrant"]
+    chunks --> dense["Qdrant<br/>(only new or changed chunks embedded)"]
     q([question]) --> bm25 & dense
     bm25 & dense -->|RRF| fused[top-k]
     fused -->|optional| rerank[cross-encoder]
@@ -63,7 +63,7 @@ Two findings drive the next step. First, the original labels miss relevant passa
 
 | Decision | Why |
 |---|---|
-| Exact FAISS search, Qdrant optional | ~10³ vectors: exact search is not the bottleneck (query encoding is); Qdrant returns the same neighbours and is there for filtering and incremental updates |
+| Qdrant as the only vector store | Not for speed: at ~10³ vectors exact FAISS search took 0.08 ms against Qdrant's ~3 ms, both far below query encoding. Qdrant filters inside the search and lets the weekly crawl embed only new or changed chunks. Switching kept every score identical on all 159 test queries; only the order of exact ties (the same passage in two versions of a regulation) can differ, and those now prefer the newest version ([details](eval/EXPERIMENTS_2C.md#qdrant-as-the-only-store)) |
 | Structure-aware chunks with a word budget | The original chunker produced chunks of up to 19,440 characters, mostly truncated by a 128-token encoder |
 | Index manifest | The retriever searches with the tokenizer, model and casing the index was built with, so a model swap cannot silently corrupt results |
 | Labels on frozen units, projected onto any chunking | Re-chunking would otherwise invalidate every label; all configurations are scored against the same relevant set |
@@ -115,7 +115,7 @@ huflit-qa serve --port 8080          # chat page at http://127.0.0.1:8080/, Open
 ## Docker
 
 ```bash
-docker compose up -d                                         # API + Ollama (GPU if available)
+docker compose up -d                                         # API + Qdrant server + Ollama (GPU if available)
 docker compose exec ollama ollama pull qwen2.5:7b-instruct   # once, ~4.7 GB
 ```
 

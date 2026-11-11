@@ -32,15 +32,17 @@ def process(settings: Settings) -> None:
     logger.info("%d thong_bao records -> %s", len(tb_records), settings.thong_bao_flat_path)
 
 
-def build_index(settings: Settings, encoder: "Encoder | None" = None) -> None:
-    """Chunk the flat records, build the BM25 and FAISS indexes and write the manifest.
+def build_index(settings: Settings, encoder: "Encoder | None" = None) -> dict[str, int]:
+    """Chunk the flat records, build BM25, sync the vectors into Qdrant and write the manifest.
 
-    Pass an already-loaded ``encoder`` to build several indexes with the same model.
+    Only new or changed chunks are embedded. Pass an already-loaded ``encoder`` to build several
+    indexes with the same model. Returns the Qdrant sync counts.
     """
-    # Imported here so `process` does not pay for loading torch/faiss.
+    # Imported here so `process` does not pay for loading torch.
     from huflit_qa.indexing.bm25 import build_bm25, save_bm25
     from huflit_qa.indexing.encoders import Encoder
     from huflit_qa.indexing.manifest import build_manifest, save_manifest
+    from huflit_qa.indexing.stores import QdrantStore
     from huflit_qa.indexing.tokenize import get_tokenizer
 
     chunks = chunk_all(settings.quy_che_flat_path, settings.thong_bao_flat_path, settings.chunking)
@@ -57,18 +59,12 @@ def build_index(settings: Settings, encoder: "Encoder | None" = None) -> None:
     emb = settings.embedding
     if encoder is None:
         encoder = Encoder(emb.model, emb.max_seq_length, emb.batch_size)
-    if settings.index.vector_store == "qdrant":
-        from huflit_qa.indexing.stores import QdrantStore
-
-        QdrantStore(settings.qdrant_path).sync(chunks, texts, encoder)
-        logger.info("Qdrant -> %s", settings.qdrant_path)
-    else:
-        from huflit_qa.indexing.stores import FaissStore
-
-        logger.info("Encoding %d chunks with %s", len(chunks), emb.model)
-        FaissStore.build(
-            encoder.encode_passages(texts), chunk_ids, settings.faiss_path, settings.faiss_ids_path
-        )
-        logger.info("FAISS -> %s", settings.faiss_path)
+    # Always the embedded store next to the index, so the index folder is self-contained;
+    # a server is seeded from it with `huflit-qa push-vectors`.
+    store = QdrantStore(path=settings.qdrant_path)
+    stats = store.sync(chunks, texts, encoder)
+    store.close()
+    logger.info("Qdrant -> %s", settings.qdrant_path)
 
     save_manifest(build_manifest(settings, len(chunks), encoder.dim), settings.manifest_path)
+    return stats

@@ -23,3 +23,6 @@ data/.runs/
 data/reports/
 deploy/static/app.css
 deploy/static/ui.js
+
+# Embedded Qdrant lock file (created whenever the index is opened)
+**/qdrant/.lock

@@ -7,7 +7,7 @@ Measured on 2026-10-19 with `huflit-qa eval --output eval/results/baseline.json`
 | Corpus | 1,209 chunks (715 regulations, 494 announcements) from 516 documents |
 | Test set | 50 labelled queries (v1), 129 relevant chunks (`eval/testset.jsonl`) |
 | Embedding model | `paraphrase-multilingual-MiniLM-L12-v2` (384-d) |
-| Dense index | FAISS `IndexFlatIP` on L2-normalised vectors |
+| Dense index | FAISS `IndexFlatIP` on L2-normalised vectors (since replaced by Qdrant: same scores, Hybrid nDCG@10 0.618 because exact ties are ordered differently, see [EXPERIMENTS_2C](EXPERIMENTS_2C.md#qdrant-as-the-only-store)) |
 | BM25 | `rank_bm25.BM25Okapi`, lowercase + whitespace tokenisation |
 | Fusion | Reciprocal Rank Fusion, k = 60, top-20 from each retriever |
 | Chunking | `CHUNK_SIZE=400`, `CHUNK_OVERLAP=0`, `MIN_CHUNK_SIZE=100` (characters) |

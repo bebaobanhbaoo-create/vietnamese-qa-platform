@@ -6,7 +6,7 @@ The public demo ([GitHub Pages](https://bebaobanhbaoo-create.github.io/vietnames
 |---|---|---|
 | Chunks, metadata | `data/index/chunks.json` | exported by `scripts/build_static_demo.py` |
 | BM25 | `rank_bm25.BM25Okapi`, lowercase + whitespace tokens | JavaScript port of the same formula (k1 1.5, b 0.75, ε 0.25), stable sort |
-| Passage vectors | FAISS `IndexFlatIP` | the same float32 vectors, read back from `faiss.bin` |
+| Passage vectors | Qdrant (`data/index/qdrant`) | the same float32 vectors, read back from Qdrant |
 | Query vector | `paraphrase-multilingual-MiniLM-L12-v2`, PyTorch | `Xenova/paraphrase-multilingual-MiniLM-L12-v2`, ONNX 8-bit, transformers.js 3.8.0 |
 | Fusion | RRF, k = 60, top 20 per retriever | same |
 
@@ -25,5 +25,7 @@ The fp32 run shows the dense differences come from 8-bit quantisation of the que
 |---|---|---|
 | Python | 0.621 | 0.840 |
 | Browser, 8-bit | 0.607 | 0.840 |
+
+These numbers were measured while the Python side used FAISS. With Qdrant the Python side scores 0.618 nDCG@10: every score is the same, only the order of exact ties changed ([details](../eval/EXPERIMENTS_2C.md#qdrant-as-the-only-store)).
 
 The page uses the 8-bit model (118 MB, cached after the first visit) rather than fp32 (470 MB). Until it has loaded, the page searches with BM25 alone and says so.

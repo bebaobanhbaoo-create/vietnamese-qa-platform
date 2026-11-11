@@ -22,7 +22,7 @@ Regulations (quy chế, quy định) and student announcements (thông báo) pub
 | `raw/` | Article metadata and page text from the portal (434 articles) | `huflit-qa scrape` |
 | `attachments/` | Regulation attachments: PDF/JPG plus extracted `.txt` (some corrected by hand) | download + `huflit-qa extract-pdf` |
 | `processed/` | Records split by type; `*_flat.json` = one record per page or attachment (516) | `huflit-qa process` |
-| `index/` | Shipped index: 1,209 chunks, BM25, FAISS, `manifest.json` | `huflit-qa index` |
+| `index/` | Shipped index: 1,209 chunks, BM25, embedded Qdrant (`qdrant/`), `manifest.json` | `huflit-qa index` |
 
 ## Statistics
 

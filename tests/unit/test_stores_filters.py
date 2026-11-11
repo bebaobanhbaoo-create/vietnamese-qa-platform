@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import pytest
 
@@ -65,15 +67,24 @@ class FakeEncoder:
         return np.stack([self._vec(t) for t in texts])
 
 
-def test_qdrant_sync_is_incremental_and_filters_match_faiss(tmp_path):
+def _brute_force(vectors, chunks, query, top_k, filters):
+    """Exact cosine search with the Python filter: what Qdrant must return."""
+    scores = vectors @ query / np.linalg.norm(query)
+    order = [i for i in np.argsort(-scores, kind="stable") if filters is None or filters.matches(chunks[i])]
+    return [chunks[i]["chunk_id"] for i in order[:top_k]]
+
+
+def test_qdrant_sync_is_incremental_and_filters_match_exact_search(tmp_path):
     pytest.importorskip("qdrant_client")
-    pytest.importorskip("faiss")
-    from huflit_qa.indexing.stores import FaissStore, QdrantStore
+    from huflit_qa.indexing.stores import QdrantStore
 
     chunks = [
         _chunk(f"c{i}", doc_type="quy_che" if i % 2 else "thong_bao", posted=f"{2020 + i % 6}-01-01")
         for i in range(30)
     ]
+    for i, c in enumerate(chunks):
+        if c["doc_type"] == "quy_che":
+            c["newest_in_group"] = i % 4 == 1
     texts = [f"văn bản số {i}" for i in range(30)]
     enc = FakeEncoder()
 
@@ -90,13 +101,95 @@ def test_qdrant_sync_is_incremental_and_filters_match_faiss(tmp_path):
     assert enc.calls == 30  # metadata changes never re-embed
     assert store.sync(chunks[:-1], texts[:-1], enc)["deleted"] == 1
 
+    kept = chunks[:-1]
     vectors = enc.encode_passages(texts[:-1])
-    FaissStore.build(vectors, [c["chunk_id"] for c in chunks[:-1]], tmp_path / "f.bin", tmp_path / "ids.json")
-    faiss_store = FaissStore(tmp_path / "f.bin", tmp_path / "ids.json", {c["chunk_id"]: c for c in chunks})
+    query = vectors[3] + 0.3 * vectors[8]
+    for filters in (
+        None,
+        SearchFilters(doc_type="quy_che", year_from=2023),
+        SearchFilters(newest_only=True),
+        SearchFilters(issuer_unit="Phòng CTSV"),
+    ):
+        expected = _brute_force(vectors, kept, query, 5, filters)
+        assert [cid for cid, _ in store.search(query, 5, filters)] == expected
 
-    query = vectors[3]
-    for filters in (None, SearchFilters(doc_type="quy_che", year_from=2023)):
-        a = [cid for cid, _ in faiss_store.search(query, 5, filters)]
-        b = [cid for cid, _ in store.search(query, 5, filters)]
-        assert a == b
+    # The browser demo export reads the stored vectors back in chunk order.
+    ids = [c["chunk_id"] for c in kept]
+    np.testing.assert_allclose(store.vectors(ids), vectors, atol=1e-6)
+
+    # Seeding another collection (a server in production) copies vectors without re-embedding,
+    # and a second copy writes nothing.
+    mirror = QdrantStore(path=tmp_path / "mirror")
+    assert mirror.copy_from(store)["embedded"] == 29
+    assert mirror.copy_from(store) == {"embedded": 0, "payload_updated": 0, "deleted": 0, "unchanged": 29}
+    assert mirror.search(query, 5) == store.search(query, 5)
+    assert enc.calls == 30 + 29  # only the explicit encode above
+    mirror.close()
     store.close()
+
+
+@pytest.mark.skipif(not os.environ.get("HUFLIT_TEST_QDRANT_URL"), reason="needs a Qdrant server (CI service)")
+def test_server_mirrors_embedded_store(tmp_path):
+    """What `huflit-qa push-vectors` does in docker compose, against a real Qdrant server."""
+    pytest.importorskip("qdrant_client")
+    from huflit_qa.indexing.stores import QdrantStore
+
+    chunks = [
+        _chunk(f"c{i}", doc_type="quy_che" if i % 2 else "thong_bao", posted=f"{2020 + i % 6}-01-01")
+        for i in range(40)
+    ]
+    for i, c in enumerate(chunks):
+        if c["doc_type"] == "quy_che":
+            c["newest_in_group"] = i % 4 == 1
+    texts = [f"đoạn {i}" for i in range(40)]
+    enc = FakeEncoder()
+    local = QdrantStore(path=tmp_path / "q")
+    local.sync(chunks, texts, enc)
+
+    server = QdrantStore(url=os.environ["HUFLIT_TEST_QDRANT_URL"])
+    server.wait_ready(timeout_s=30)
+    if server.client.collection_exists(QdrantStore.COLLECTION):
+        server.client.delete_collection(QdrantStore.COLLECTION)
+    try:
+        assert server.copy_from(local)["embedded"] == 40
+        assert server.copy_from(local)["unchanged"] == 40
+        local.sync(chunks[:-2], texts[:-2], enc)
+        assert server.copy_from(local)["deleted"] == 2
+        assert server.count() == 38
+
+        query = enc.encode_passages(["truy vấn"])[0]
+        for filters in (
+            None,
+            SearchFilters(doc_type="quy_che", year_from=2023),
+            SearchFilters(newest_only=True),
+        ):
+            got, want = server.search(query, 10, filters), local.search(query, 10, filters)
+            assert [cid for cid, _ in got] == [cid for cid, _ in want]
+            assert [s for _, s in got] == pytest.approx([s for _, s in want], abs=1e-5)
+    finally:
+        server.client.delete_collection(QdrantStore.COLLECTION)
+        server.close()
+        local.close()
+
+
+def test_exact_ties_prefer_the_newest_version():
+    from huflit_qa.retrieval.hybrid import newest_first
+
+    chunks = [
+        {"chunk_id": "old", "newest_in_group": False, "issued_date": "2021-03-18"},
+        {"chunk_id": "new", "newest_in_group": True, "issued_date": "2021-12-30"},
+        {"chunk_id": "tb_a", "date_posted": "2021-09-29"},
+        {"chunk_id": "tb_b", "date_posted": "2022-04-18"},
+    ]
+    rank = newest_first(chunks)
+    assert sorted(rank, key=rank.get) == ["new", "tb_b", "tb_a", "old"]
+
+
+def test_store_needs_exactly_one_location(tmp_path):
+    pytest.importorskip("qdrant_client")
+    from huflit_qa.indexing.stores import QdrantStore
+
+    with pytest.raises(ValueError):
+        QdrantStore()
+    with pytest.raises(ValueError):
+        QdrantStore(path=tmp_path, url="http://localhost:6333")

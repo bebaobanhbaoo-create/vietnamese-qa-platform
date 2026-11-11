@@ -12,19 +12,27 @@ jobs:
   check:
     name: lint, types, unit tests
     runs-on: ubuntu-latest
+    # A real Qdrant server for the test that mirrors the embedded store (push-vectors).
+    services:
+      qdrant:
+        image: qdrant/qdrant:v1.19.2
+        ports:
+          - 6333:6333
+    env:
+      HUFLIT_TEST_QDRANT_URL: http://localhost:6333
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
-      # Unit tests need numpy, BM25, pyvi, FAISS, Qdrant and FastAPI but no model weights,
+      # Unit tests need numpy, BM25, pyvi, Qdrant and FastAPI but no model weights,
       # so torch and sentence-transformers are left to the integration job.
       - run: pip install --no-deps -e .
       - run: >
           pip install "pydantic==2.13.4" "pydantic-settings==2.15.0" "pytest==9.1.1" "pytest-cov==7.1.0"
           "ruff==0.14.3" "mypy==1.18.2" "types-requests"
-          "numpy==2.3.5" "rank-bm25==0.2.2" "pyvi==0.1.1" "faiss-cpu==1.10.0" "qdrant-client==1.19.1"
+          "numpy==2.3.5" "rank-bm25==0.2.2" "pyvi==0.1.1" "qdrant-client==1.19.1"
           "httpx==0.28.1" "fastapi==0.162.4" "prometheus-client==0.23.1" "beautifulsoup4==4.12.3" "lxml==5.1.0" "requests==2.34.2"
       - run: ruff check .
       - run: ruff format --check .
@@ -74,6 +82,19 @@ jobs:
         run: |
           curl -fs -X POST http://localhost:8080/v1/search -H 'Content-Type: application/json' \
             -d '{"query": "điều kiện xét tốt nghiệp", "top_k": 3}' | python3 -m json.tool | head -20
+      - name: Server mode as in docker compose (push vectors to Qdrant, search through it)
+        run: |
+          docker network create qa
+          docker run -d --name qdrant --network qa qdrant/qdrant:v1.19.2
+          docker run --rm --network qa -e HUFLIT_INDEX__QDRANT_URL=http://qdrant:6333 huflit-qa:ci huflit-qa push-vectors
+          docker run -d --name api-server --network qa -p 8081:8080 \
+            -e HUFLIT_INDEX__QDRANT_URL=http://qdrant:6333 huflit-qa:ci
+          for i in $(seq 1 60); do curl -fs http://localhost:8081/health >/dev/null && break; sleep 3; done
+          curl -s http://localhost:8081/ready | python3 -c \
+            "import json,sys; i=json.load(sys.stdin)['index']; print(i); assert i['vector_store'] == 'qdrant server'"
+          curl -fs -X POST http://localhost:8081/v1/search -H 'Content-Type: application/json' \
+            -d '{"query": "điều kiện xét tốt nghiệp", "top_k": 3}' | python3 -m json.tool | head -20
+          docker logs api-server | tail -20
 
   airflow-dag:
     name: airflow DAG integrity
