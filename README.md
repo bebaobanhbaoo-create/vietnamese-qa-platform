@@ -1,52 +1,72 @@
 # HUFLIT Regulation QA
 
-Hybrid retrieval over the academic regulations and announcements published on the HUFLIT student portal (Ho Chi Minh City University of Foreign Languages – Information Technology). Ask a question in Vietnamese, get the most relevant regulation articles back with source links.
+[![CI](https://github.com/bebaobanhbaoo-create/vietnamese-qa-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/bebaobanhbaoo-create/vietnamese-qa-platform/actions/workflows/ci.yml)
 
-> Status: work in progress. The retrieval pipeline below works end to end; answer generation, an API and a demo are planned (see [docs/UPGRADE_PLAN.md](docs/UPGRADE_PLAN.md)).
+Ask a question in Vietnamese about the academic regulations and announcements of HUFLIT (Ho Chi Minh City University of Foreign Languages – Information Technology); get an answer that cites the regulation articles it comes from, or an explicit "not found" when the sources do not say.
 
-## Pipeline
+![Asking for the credit limit per semester: sources appear first, then a streamed answer citing Điều 9 of the 2021 regulation](docs/demo.gif)
 
+- **Data:** 434 portal pages and their attachments (PDF, scans), crawled, cleaned and split into 1,209 article-level passages; regulation versions dated from their headers.
+- **Retrieval:** BM25 + multilingual embeddings fused with Reciprocal Rank Fusion, optional cross-encoder reranking, metadata filters (document type, issuing office, year, newest version), FAISS or Qdrant with incremental updates.
+- **Answers:** a local LLM (Qwen2.5-7B through Ollama) answering only from numbered sources, with `[n]` citations checked automatically.
+- **Evaluation:** pooled relevance labels, chunking-independent scoring, paired bootstrap confidence intervals, answer-level grounding and refusal metrics.
+- **Engineering:** typed package and CLI, FastAPI with streaming and Prometheus metrics, Docker, CI with unit, integration and container tests.
+
+> Status: retrieval and RAG work end to end and are measured on 30 dev queries. The test set is being re-labelled (159 queries, pooled from four systems) before the final configuration is chosen and reported on the held-out split; see [docs/UPGRADE_PLAN.md](docs/UPGRADE_PLAN.md).
+
+## Architecture
+
+```mermaid
+flowchart LR
+    portal[(portal.huflit.edu.vn)] -->|scrape| raw[pages + attachments]
+    raw -->|process| records[516 flat records]
+    records -->|"chunk by Chương / Điều / Khoản"| chunks[chunks + metadata]
+    chunks --> bm25[BM25]
+    chunks --> dense["dense index<br/>FAISS or Qdrant"]
+    q([question]) --> bm25 & dense
+    bm25 & dense -->|RRF| fused[top-k]
+    fused -->|optional| rerank[cross-encoder]
+    rerank --> prompt[numbered sources]
+    fused --> prompt
+    prompt --> llm[Qwen2.5-7B via Ollama]
+    llm --> check{citation check}
+    check --> answer([answer + sources])
 ```
-portal.huflit.edu.vn ──► scrape ──► process ──► chunk ──► BM25 + FAISS ──► RRF ──► top-k chunks
-   (HTML + PDF)          ingest/    processing/  processing/  indexing/      retrieval/
-```
 
-| Step | Command | Output |
+| Step | Command | Code |
 |---|---|---|
-| 1. Scrape announcements, regulations and attachment links | `huflit-qa scrape` | `data/raw/`, `data/processed/by_doc_type/` |
-| 1b. Normalise downloaded attachments, extract PDF text | `huflit-qa normalize-attachments`, `huflit-qa extract-pdf` | `data/attachments/**.txt` |
-| 2. Flatten into records (one per web page or attachment) | `huflit-qa process` | `data/processed/by_doc_type/*_flat.json` |
-| 3. Chunk by article/clause, build BM25 and FAISS indexes | `huflit-qa index` | `data/index/` (chunks, BM25, FAISS, `manifest.json`) |
-| 4. Query | `huflit-qa query "..."` | ranked chunks |
-| 5. Evaluate | `huflit-qa eval` | nDCG, Recall, Hit, MRR, latency |
+| Scrape announcements, regulations and attachment links | `huflit-qa scrape` | `ingest/` |
+| Extract PDF text, build one record per page or attachment | `huflit-qa extract-pdf`, `huflit-qa process` | `ingest/`, `processing/` |
+| Chunk, build BM25 + dense index and its manifest | `huflit-qa index` | `processing/`, `indexing/` |
+| Search, answer | `huflit-qa query`, `huflit-qa ask` | `retrieval/`, `generation/` |
+| Evaluate retrieval, answers | `huflit-qa eval`, `huflit-qa eval-answers` | `evaluation/` |
+| Serve API + chat page | `huflit-qa serve` | `api/` |
 
-Code lives in `src/huflit_qa/`:
+## Results so far
 
-```
-ingest/       crawler, HTML parser, classification, attachment and PDF handling
-processing/   flat records, hand-corrected text sync, Điều/Khoản-aware chunkers (v1, v2)
-indexing/     BM25 (rank_bm25, optional pyvi word segmentation), dense encoders, FAISS or Qdrant (incremental), manifest
-retrieval/    hybrid retriever, weighted Reciprocal Rank Fusion, cross-encoder reranker, metadata filters
-evaluation/   P@k, R@k, MRR and the evaluation runner
-config.py     settings (pydantic-settings, overridable via HUFLIT_* env vars or .env)
-cli.py        `huflit-qa` command
-```
+Retrieval, 30 dev queries of the original labels ([2B](eval/EXPERIMENTS_2B.md), [2C](eval/EXPERIMENTS_2C.md)):
 
-## Data
+| Configuration | nDCG@10 | MRR@10 | Hit@10 |
+|---|---|---|---|
+| Baseline: BM25 + MiniLM, original chunker | 0.605 | 0.635 | 0.833 |
+| bge-m3 dense only, original chunker | 0.585 | 0.618 | 0.933 |
+| bge-m3 + structure-aware chunker + bge-reranker-v2-m3 | **0.618** | **0.723** | 0.900 |
 
-1,209 chunks from 516 documents (715 regulation chunks, 494 announcement chunks), posted between 07/2020 and 03/2026. Source documents are public pages and attachments from the HUFLIT student portal; all rights remain with the university.
+Answers with Qwen2.5-7B ([phase 3](eval/EXPERIMENTS_3.md)): every answer cites only sources it was shown or refuses; better retrieval removed false refusals (13.3% → 0%).
 
-## Results
+Two findings drive the next step. First, the original labels miss relevant passages that stronger models find: pooling from four systems surfaced 1,413 candidates (+48%) the first annotation never saw, which is why the test set is being re-labelled. Second, a cited answer can still be wrong: the baseline answered "maximum 14 credits" from a 2007 rule that sets 14 as the *minimum*. That is why answers are also reviewed by hand and why chunks carry issue dates and a newest-version flag.
 
-50 hand-labelled queries, k = 10 ([details](eval/BASELINE.md), [methodology](docs/EVALUATION.md)):
+## Design decisions
 
-| Retriever | nDCG@10 | R@10 | Hit@10 | MRR@10 |
-|---|---|---|---|---|
-| BM25 | 0.485 | 0.640 | 0.800 | 0.499 |
-| Dense (multilingual MiniLM) | 0.490 | 0.608 | 0.780 | 0.525 |
-| **Hybrid (RRF)** | **0.621** | **0.723** | **0.840** | **0.630** |
-
-The test set is being expanded to ~160 queries with pooled relevance judgements and a dev/test split.
+| Decision | Why |
+|---|---|
+| Exact FAISS search, Qdrant optional | ~10³ vectors: exact search is not the bottleneck (query encoding is); Qdrant returns the same neighbours and is there for filtering and incremental updates |
+| Structure-aware chunks with a word budget | The original chunker produced chunks of up to 19,440 characters, mostly truncated by a 128-token encoder |
+| Index manifest | The retriever searches with the tokenizer, model and casing the index was built with, so a model swap cannot silently corrupt results |
+| Labels on frozen units, projected onto any chunking | Re-chunking would otherwise invalidate every label; all configurations are scored against the same relevant set |
+| Pooled annotation from several systems | Labelling only what one system returns biases the test set towards it |
+| Paired bootstrap on per-query nDCG | 30 dev queries are too few to read differences of a few points without an interval |
+| Local LLM, fixed refusal sentence, citation check | Runs offline on a 6 GB laptop GPU; refusals and citation errors are detectable without a judge model |
 
 ## Quickstart
 
@@ -64,11 +84,9 @@ The repository ships with a prebuilt index; run `huflit-qa index` to rebuild it.
 
 ## Answering questions (RAG)
 
-Answers are generated by a local model through [Ollama](https://ollama.com), from the top retrieved chunks, with `[n]` citations that are checked against the sources shown to the model.
-
 ```bash
 ollama pull qwen2.5:7b-instruct
-huflit-qa ask "Mỗi học kỳ được đăng ký tối đa bao nhiêu tín chỉ?" --rerank BAAI/bge-reranker-v2-m3
+huflit-qa ask "Mỗi học kỳ được đăng ký tối đa bao nhiêu tín chỉ?" --newest-only
 huflit-qa eval-answers --split dev --output eval/results/answers_dev.json
 ```
 
@@ -82,13 +100,13 @@ huflit-qa serve --port 8080          # chat page at http://127.0.0.1:8080/, Open
 
 | Endpoint | |
 |---|---|
-| `GET /health`, `GET /ready` | Liveness; readiness reports the loaded index and whether the LLM is reachable |
+| `GET /health`, `GET /ready` | Liveness; readiness reports the loaded index, the mode (`rag` or `search`) and whether the LLM is reachable |
 | `POST /v1/search` | Hybrid search with metadata filters (`doc_type`, `issuer_unit`, `year_from`, `newest_only`) |
 | `POST /v1/ask` | Answer with numbered sources and a citation check (`grounded`, `refused`, invalid citations) |
 | `POST /v1/ask/stream` | The same as server-sent events: `sources`, then `token`s, then `done` |
 | `GET /metrics` | Prometheus request counts and latency histograms |
 
-Every response carries an `x-request-id`; logs include it with the route, status and duration.
+`HUFLIT_GENERATION__ENABLED=false` runs search only, as in the public demo. Every response carries an `x-request-id`; logs include it with the route, status and duration.
 
 ## Docker
 
@@ -97,14 +115,18 @@ docker compose up -d                                         # API + Ollama (GPU
 docker compose exec ollama ollama pull qwen2.5:7b-instruct   # once, ~4.7 GB
 ```
 
-The API image is CPU-only (PyTorch CPU wheels), runs as a non-root user, ships the prebuilt index and the embedding model so it starts offline, and has a health check. Tagging `v*` publishes it to GitHub Container Registry.
+The API image is CPU-only (PyTorch CPU wheels), runs as a non-root user, ships the prebuilt index and the embedding model so it starts offline, and has a health check. Tagging `v*` publishes it to GitHub Container Registry. `scripts/deploy_space.py` deploys the search-only demo to a Hugging Face Space.
+
+## Data
+
+1,209 chunks from 516 documents (715 regulation, 494 announcement), posted between 07/2020 and 03/2026; see the [data card](docs/DATA_CARD.md). The documents belong to HUFLIT; they are public on the portal and used here for research. The full corpus is kept in a private Hugging Face dataset (`huflit-qa download-data`).
 
 ## Development
 
 ```bash
-make check      # ruff lint + format check, mypy, pytest
+make check                 # ruff lint + format check, mypy, unit tests
 pytest tests/integration   # end to end on a tiny corpus with the real embedding model
-make format     # auto-fix lint and formatting
+make format                # auto-fix lint and formatting
 ```
 
 ## License
